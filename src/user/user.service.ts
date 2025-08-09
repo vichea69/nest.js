@@ -66,8 +66,8 @@ export class UserService {
     }
     return user;
   }
-  ///Find one
 
+  //Get user by id 
   async findById(id: number): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
       where: {
@@ -84,7 +84,7 @@ export class UserService {
 
 
 
-//generate token random number 
+  //generate token random number 
   generateToken(user: UserEntity): string {
     //console.log(process.env.JWT_SECRET);
 
