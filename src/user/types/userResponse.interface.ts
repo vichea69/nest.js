@@ -1,5 +1,5 @@
-import { IUser } from "./user.type";
+import { UserType } from "./user.type";
 
 export interface IUserResponse {
-    user: IUser & { token: string }
+    user: UserType & { token: string }
 }
