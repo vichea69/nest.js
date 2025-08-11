@@ -5,7 +5,8 @@ import { UserEntity } from "./user.entity";
 import { Repository } from "typeorm";
 import { IUserResponse } from "./types/userResponse.interface";
 import { sign, verify } from "jsonwebtoken";
-import { compare } from "bcrypt";
+import { compare, hash } from "bcrypt";
+import { UpdateUserDto } from "./dto/updateUser.dto";
 
 @Injectable()
 // =============================
@@ -80,7 +81,25 @@ export class UserService {
     return user;
   }
 
+  //Update user
+  async updateUser(userId: number, updateUserDto: UpdateUserDto): Promise<UserEntity> {
+    const user = await this.findById(userId);
 
+    const isPasswordChanging = typeof updateUserDto.password === 'string' && updateUserDto.password.trim().length > 0;
+
+    // Assign non-password fields
+    const { password: maybeNewPassword, ...rest } = updateUserDto as Partial<UpdateUserDto> & { password?: string };
+    Object.assign(user, rest);
+
+    if (isPasswordChanging && typeof maybeNewPassword === 'string') {
+      user.password = await hash(maybeNewPassword, 10);
+    } else {
+      // Preserve existing hash
+      user.password = user.password;
+    }
+
+    return await this.userRepository.save(user);
+  }
 
 
 
@@ -103,9 +122,9 @@ export class UserService {
   }
 
   generateUserResponse(user: UserEntity): IUserResponse {
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.UNPROCESSABLE_ENTITY);
-    }
+    // if (!user) {
+    //   throw new HttpException('User not found', HttpStatus.UNPROCESSABLE_ENTITY);
+    // }
     return {
       user: {
         ...user,

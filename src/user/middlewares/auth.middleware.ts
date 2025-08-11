@@ -12,19 +12,24 @@ export class AuthMiddleware implements NestMiddleware {
     ) { }
 
     async use(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
-        if (!req.headers.authorization) {
+        const authHeader = req.headers.authorization ?? '';
+
+        if (!authHeader || !authHeader.toLowerCase().startsWith('bearer ')) {
+            req.user = new UserEntity();
             return next();
         }
 
-        const token = req.headers.authorization.split(' ')[1];
+        const token = authHeader.split(' ')[1];
 
         try {
             const decoded: any = verify(token, process.env.JWT_SECRET as string);
             const user = await this.userService.findById(decoded.id as number);
             req.user = user;
-            next();
+            return next();
         } catch (error) {
-            throw new HttpException('Not Authorized', HttpStatus.UNAUTHORIZED);
+            // Do not block public routes on bad/expired tokens; leave user empty
+            req.user = new UserEntity();
+            return next();
         }
     }
 

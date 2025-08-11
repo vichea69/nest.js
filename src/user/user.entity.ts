@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, BeforeUpdate } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, OneToMany, JoinTable, ManyToMany } from "typeorm";
 import * as bcrypt from 'bcrypt';
+import { ArticleEntity } from "@/article/article.entity";
 //define the user entity with the columns
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -21,8 +22,16 @@ export class UserEntity {
     @Column()
     password: string;
 
+
+    //Relationships
+    @OneToMany(() => ArticleEntity, (article) => article.author)
+    articles: ArticleEntity[];
+
+    @ManyToMany(() => ArticleEntity)
+    @JoinTable()
+    favorites: ArticleEntity[];
+
     @BeforeInsert()
-    @BeforeUpdate()
     async hashPassword() {
         if (this.password) {
             const salt = await bcrypt.genSalt(10);
