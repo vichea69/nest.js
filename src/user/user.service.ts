@@ -113,7 +113,7 @@ export class UserService {
         username: user.username,
         email: user.email
       },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET as string
     );
 
     // const decode = verify(generateToken, 'SECRET12345678abcdfg');
