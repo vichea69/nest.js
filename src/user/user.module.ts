@@ -5,6 +5,7 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {UserEntity} from "./user.entity";
 import {AuthMiddleware} from "./middlewares/auth.middleware";
 import {JwtModule} from "@nestjs/jwt";
+import { RolesGuard } from "./guards/roles.guard";
 
 @Module({
     imports: [TypeOrmModule.forFeature([UserEntity]),
@@ -14,7 +15,7 @@ import {JwtModule} from "@nestjs/jwt";
             signOptions: {expiresIn: '60s'},
         }),],
     controllers: [UserController],
-    providers: [UserService],
+    providers: [UserService, RolesGuard],
     exports: [UserService]
 
 })

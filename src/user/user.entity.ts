@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, OneToMany, JoinTable, ManyToMany } from "typeorm";
 import * as bcrypt from 'bcrypt';
 import { ArticleEntity } from "@/article/article.entity";
+import { Role } from "./enums/role.enum";
 //define the user entity with the columns
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -21,6 +22,13 @@ export class UserEntity {
 
     @Column()
     password: string;
+
+    @Column({
+        type: 'enum',
+        enum: Role,
+        default: Role.User,
+    })
+    role: Role;
 
 
     //Relationships

@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Post, Put, Res, UseGuards, UsePipes, ValidationPipe} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, Res, UseGuards, UsePipes, ValidationPipe} from '@nestjs/common';
 import {UserService} from './user.service';
 import {CreateUserDto} from './dto/createUser.dto';
 import {IUserResponse} from './types/userResponse.interface';
@@ -7,6 +7,10 @@ import {AuthGuard} from './guards/auth.guard';
 import {UpdateUserDto} from './dto/updateUser.dto';
 import {LoginDto} from './dto/loginUser.dto';
 import express from 'express';
+import { Roles } from './decorators/roles.decorator';
+import { RolesGuard } from './guards/roles.guard';
+import { Role } from './enums/role.enum';
+import { AdminCreateUserDto } from './dto/adminCreateUser.dto';
 
 @Controller()
 export class UserController {
@@ -52,7 +56,8 @@ export class UserController {
 
     //Update user
     @Put('user')
-    @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(Role.Admin, Role.Editor)
     @UsePipes(new ValidationPipe({whitelist: true, forbidNonWhitelisted: true, transform: true}))
     async updateUser(
         @User('id') userId: number,
@@ -63,6 +68,8 @@ export class UserController {
     }
 
     @Post('logout')
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(Role.Admin, Role.Editor, Role.User)
     async logout(@Res({passthrough: true}) res: express.Response) {
         // Clear the cookie by name and path (must match how it was set)
         res.clearCookie('access_token', {path: '/'});
@@ -72,5 +79,36 @@ export class UserController {
     @Get('users')
     async getUsers() {
         return await this.userService.findAll();
+    }
+
+    // Admin create user with role
+    @Post('admin/users')
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(Role.Admin)
+    @UsePipes(new ValidationPipe())
+    async adminCreateUser(@Body('user') dto: AdminCreateUserDto): Promise<IUserResponse> {
+        return await this.userService.adminCreateUser(dto);
+    }
+
+    // Admin update any user
+    @Put('admin/users/:id')
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(Role.Admin)
+    @UsePipes(new ValidationPipe({whitelist: true, forbidNonWhitelisted: true, transform: true}))
+    async adminUpdateUser(
+        @Param('id') id: string,
+        @Body('user') dto: UpdateUserDto
+    ): Promise<IUserResponse> {
+        const updated = await this.userService.adminUpdateUser(Number(id), dto);
+        return this.userService.generateUserResponse(updated);
+    }
+
+    // Admin delete any user
+    @Delete('admin/users/:id')
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(Role.Admin)
+    async adminDeleteUser(@Param('id') id: string) {
+        await this.userService.adminDeleteUser(Number(id));
+        return { message: 'User deleted successfully' };
     }
 }   

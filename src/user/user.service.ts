@@ -7,6 +7,7 @@ import { IUserResponse } from "./types/userResponse.interface";
 import { sign, verify } from "jsonwebtoken";
 import { compare, hash } from "bcrypt";
 import { UpdateUserDto } from "./dto/updateUser.dto";
+import { AdminCreateUserDto } from "./dto/adminCreateUser.dto";
 
 @Injectable()
 // =============================
@@ -46,6 +47,23 @@ export class UserService {
     const savedUser = await this.userRepository.save(newUser);
     return this.generateUserResponse(savedUser);
 
+  }
+  // Admin-create user with explicit role
+  async adminCreateUser(dto: AdminCreateUserDto): Promise<IUserResponse> {
+    const newUser = new UserEntity();
+    Object.assign(newUser, dto);
+
+    const [userByEmail, userByUsername] = await Promise.all([
+      this.userRepository.findOne({ where: { email: dto.email } }),
+      this.userRepository.findOne({ where: { username: dto.username } }),
+    ]);
+
+    if (userByEmail || userByUsername) {
+      throw new HttpException('Email or username are already in use', HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    const saved = await this.userRepository.save(newUser);
+    return this.generateUserResponse(saved);
   }
   ///login method 
   async login(loginUserDto: any): Promise<UserEntity> {
@@ -105,6 +123,30 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
+  // Admin update any user by id
+  async adminUpdateUser(targetUserId: number, updateUserDto: UpdateUserDto): Promise<UserEntity> {
+    const user = await this.findById(targetUserId);
+
+    const isPasswordChanging = typeof updateUserDto.password === 'string' && updateUserDto.password.trim().length > 0;
+
+    const { password: maybeNewPassword, ...rest } = updateUserDto as Partial<UpdateUserDto> & { password?: string };
+    Object.assign(user, rest);
+
+    if (isPasswordChanging && typeof maybeNewPassword === 'string') {
+      user.password = await hash(maybeNewPassword, 10);
+    } else {
+      user.password = user.password;
+    }
+
+    return await this.userRepository.save(user);
+  }
+
+  // Admin delete any user by id
+  async adminDeleteUser(targetUserId: number): Promise<void> {
+    const user = await this.findById(targetUserId);
+    await this.userRepository.remove(user);
+  }
+
 
 
   //generate token random number 
@@ -115,7 +157,8 @@ export class UserService {
       {
         id: user.id,
         username: user.username,
-        email: user.email
+        email: user.email,
+        role: user.role
       },
       process.env.JWT_SECRET as string
     );

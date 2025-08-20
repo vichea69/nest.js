@@ -4,6 +4,9 @@ import { ArticleService } from "./article.serverice";
 import { UserEntity } from "@/user/user.entity";
 import { User } from "@/user/decorators/user.decorator";
 import { AuthGuard } from "@/user/guards/auth.guard";
+import { Roles } from "@/user/decorators/roles.decorator";
+import { RolesGuard } from "@/user/guards/roles.guard";
+import { Role } from "@/user/enums/role.enum";
 
 @Controller()
 export class ArticleController {
@@ -23,14 +26,16 @@ export class ArticleController {
     }
     //create article
     @Post('articles')
-    @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(Role.Admin, Role.Editor)
     async createArticle(@Body('article') createArticleDto: CreateArticleDto, @User() user: UserEntity) {
         const newArticle = await this.articleService.createArticle(user, createArticleDto);
         return this.articleService.getArticleResponse(newArticle);
     }
     //delete article
     @Delete('articles/:slug')
-    @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(Role.Admin, Role.Editor)
     async deleteArticle(@Param('slug') slug: string, @User() user: UserEntity) {
         const currentUserId = user.id;
         await this.articleService.deleteArticle(slug, currentUserId);
@@ -40,7 +45,8 @@ export class ArticleController {
     }
     //update article
     @Put('articles/:slug')
-    @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(Role.Admin, Role.Editor)
     @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
     async updateArticle(
         @Param('slug') slug: string,
@@ -52,7 +58,8 @@ export class ArticleController {
     }
     // add to favorite article
     @Post('articles/:slug/favorite')
-    @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(Role.Admin, Role.Editor, Role.User)
     async addToFavoriteArticle(@Param('slug') slug: string, @User() user: UserEntity) {
         const article = await this.articleService.addToFavoriteArticle(slug, user.id);
         return this.articleService.getArticleResponse(article);
@@ -60,7 +67,8 @@ export class ArticleController {
 
     // remove from favorite article
     @Delete('articles/:slug/favorite')
-    @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(Role.Admin, Role.Editor, Role.User)
     async removeFromFavoriteArticle(@Param('slug') slug: string, @User() user: UserEntity) {
         const article = await this.articleService.removeFromFavoriteArticle(slug, user.id);
         return this.articleService.getArticleResponse(article);
