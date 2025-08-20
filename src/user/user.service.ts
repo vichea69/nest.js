@@ -80,6 +80,10 @@ export class UserService {
     }
     return user;
   }
+  //Get all users
+  async findAll(): Promise<UserEntity[]> {
+    return await this.userRepository.find();
+  }
 
   //Update user
   async updateUser(userId: number, updateUserDto: UpdateUserDto): Promise<UserEntity> {

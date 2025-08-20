@@ -68,4 +68,9 @@ export class UserController {
         res.clearCookie('access_token', {path: '/'});
         return {ok: true};
     }
+    //Get all users
+    @Get('users')
+    async getUsers() {
+        return await this.userService.findAll();
+    }
 }   
