@@ -149,23 +149,36 @@ export class UserService {
 
 
 
-  //generate token random number 
+  // Access token (short-lived)
   generateToken(user: UserEntity): string {
-    //console.log(process.env.JWT_SECRET);
-
     return sign(
       {
         id: user.id,
         username: user.username,
         email: user.email,
-        role: user.role
+        role: user.role,
+        type: 'access',
       },
-      process.env.JWT_SECRET as string
+      process.env.JWT_SECRET as string,
+      { expiresIn: '15m' }
     );
+  }
 
-    // const decode = verify(generateToken, 'SECRET12345678abcdfg');
-    // console.log(decode);
-    // return generateToken;
+  // Refresh token (long-lived)
+  generateRefreshToken(user: UserEntity): string {
+    // Use same secret unless JWT_REFRESH_SECRET is provided
+    const secret = (process.env.JWT_REFRESH_SECRET as string) || (process.env.JWT_SECRET as string);
+    return sign(
+      {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        type: 'refresh',
+      },
+      secret,
+      { expiresIn: '7d' }
+    );
   }
 
   generateUserResponse(user: UserEntity): IUserResponse {
@@ -175,7 +188,8 @@ export class UserService {
     return {
       user: {
         ...user,
-        token: this.generateToken(user)
+        token: this.generateToken(user),
+        refreshToken: this.generateRefreshToken(user),
       }
     }
   }

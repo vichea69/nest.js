@@ -34,13 +34,21 @@ export class UserController {
         const user = await this.userService.login(loginUserDto);
         const response = this.userService.generateUserResponse(user);
 
-        // httpOnly cookie for Next middleware / server components
+        // httpOnly cookies for Next middleware / server components
         res.cookie('access_token', response.user.token, {
             httpOnly: true,
             sameSite: 'lax',     // for localhost over http
             secure: false,       // set true in HTTPS production
             path: '/',
             maxAge: 15 * 60 * 1000,
+        });
+        // refresh token cookie (longer-lived)
+        res.cookie('refresh_token', (response.user as any).refreshToken, {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: false,
+            path: '/',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
         return response; // body still returns { user: {..., token } }

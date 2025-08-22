@@ -54,11 +54,15 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, AnyObject> {
         let meta: AnyObject | undefined;
         if (data && typeof data === 'object' && 'user' in data) {
           const user = (data as AnyObject).user ?? {};
-          const { token, password, ...restUser } = user || {};
+          const { token, refreshToken, password, ...restUser } = user || {};
 
-          const tokens: AnyObject | undefined = token
-            ? { accessToken: token }
-            : undefined;
+          const tokens: AnyObject | undefined =
+            token || refreshToken
+              ? {
+                  ...(token ? { accessToken: token } : {}),
+                  ...(refreshToken ? { refreshToken } : {}),
+                }
+              : undefined;
 
           if (tokens) {
             meta = {

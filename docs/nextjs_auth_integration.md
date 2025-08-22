@@ -10,7 +10,7 @@ It covers both the App Router (Next 13+) and the Pages Router.
 
 - Base URL: `http://localhost:3000/api/v1`
 - Endpoints:
-  - `POST /login` — log in, sets `access_token` httpOnly cookie and returns standard JSON
+  - `POST /login` — log in, sets `access_token` and `refresh_token` httpOnly cookies and returns standard JSON
   - `POST /register` — create account, returns standard JSON
   - `GET /user` — current user (requires auth cookie or Bearer token)
   - `POST /logout` — clears `access_token` cookie
@@ -23,7 +23,7 @@ On success, responses follow:
   "message": "Authenticated successfully",
   "data": {
     "user": { "id": 1, "username": "...", "email": "...", "role": "user" },
-    "tokens": { "accessToken": "..." }
+    "tokens": { "accessToken": "...", "refreshToken": "..." }
   },
   "meta": { "accessTokenExpiresIn": 900, "refreshTokenExpiresIn": 604800 },
   "timestamp": "...",
@@ -287,7 +287,5 @@ For hard protection, prefer server-side checks (SSR/App Router server components
 
 ## Notes
 
-- The backend currently sets an `access_token` httpOnly cookie on login. Keep `credentials: 'include'` for browser requests and forward the `Cookie` header for SSR.
-- The standard response also includes `data.tokens.accessToken`; you can use it for non-browser clients if needed, but avoid storing it in localStorage for web apps.
-- Refresh tokens are not yet implemented in the backend. If you want full refresh flow, add a refresh endpoint and httpOnly cookie rotation.
-
+- The backend sets `access_token` (15m) and `refresh_token` (7d) httpOnly cookies on login. Keep `credentials: 'include'` for browser requests and forward the `Cookie` header for SSR.
+- The standard response includes `data.tokens.accessToken` and `data.tokens.refreshToken` for non-browser clients. For web apps, avoid storing tokens in localStorage; rely on httpOnly cookies.
