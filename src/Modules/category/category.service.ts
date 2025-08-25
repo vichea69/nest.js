@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { CategoryEntity } from "@/Modules/category/category.entity";
 import { CreateCategoryDto } from "@/Modules/category/dto/create-category.dto";
 import { UpdateCategoryDto } from "@/Modules/category/dto/update-category.dto";
+import { UserEntity } from "@/user/user.entity";
 
 @Injectable()
 export class CategoryService {
@@ -12,21 +13,21 @@ export class CategoryService {
         private readonly categoryRepository: Repository<CategoryEntity>,
     ) {}
 
-    async create(dto: CreateCategoryDto): Promise<CategoryEntity> {
+    async create(user: UserEntity, dto: CreateCategoryDto): Promise<CategoryEntity> {
         const existing = await this.categoryRepository.findOne({ where: { name: dto.name } });
         if (existing) {
             throw new HttpException('Category name already exists', HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        const category = this.categoryRepository.create(dto);
+        const category = this.categoryRepository.create({ ...dto, createdBy: user ?? null });
         return await this.categoryRepository.save(category);
     }
 
     async findAll(): Promise<CategoryEntity[]> {
-        return await this.categoryRepository.find({ order: { createdAt: 'DESC' } });
+        return await this.categoryRepository.find({ order: { createdAt: 'DESC' }, relations: ['createdBy'] });
     }
 
     async findOne(id: number): Promise<CategoryEntity> {
-        const category = await this.categoryRepository.findOne({ where: { id } });
+        const category = await this.categoryRepository.findOne({ where: { id }, relations: ['createdBy'] });
         if (!category) {
             throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
         }

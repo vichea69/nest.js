@@ -1,4 +1,5 @@
-import { BeforeUpdate, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BeforeUpdate, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { UserEntity } from "@/user/user.entity";
 
 @Entity({ name: 'categories' })
 export class CategoryEntity {
@@ -17,9 +18,11 @@ export class CategoryEntity {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: 'SET NULL' })
+  createdBy?: UserEntity | null;
+
   @BeforeUpdate()
   updateTimestamp() {
     this.updatedAt = new Date();
   }
 }
-

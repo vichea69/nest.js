@@ -9,6 +9,8 @@ import {ConfigModule} from '@nestjs/config';
 import {ArticleModule} from './article/article.module';
 import {ProfileModule} from './profile/profile.module';
 import {CategoryModule} from "@/Modules/category/category.module";
+import { PageModule } from '@/Modules/page/page.module';
+import { MenuModule } from '@/Modules/menu/menu.module';
 
 
 @Module({
@@ -21,7 +23,9 @@ import {CategoryModule} from "@/Modules/category/category.module";
         UserModule,
         ArticleModule,
         ProfileModule,
-        CategoryModule
+        CategoryModule,
+        PageModule,
+        MenuModule
     ],
     controllers: [AppController],
     providers: [AppService],

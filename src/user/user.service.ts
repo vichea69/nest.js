@@ -83,7 +83,8 @@ export class UserService {
     if (!matchPassword) {
       throw new HttpException('Invalid password', HttpStatus.UNPROCESSABLE_ENTITY);
     }
-    return user;
+    user.lastLogin = new Date();
+    return await this.userRepository.save(user);
   }
 
   //Get user by id 

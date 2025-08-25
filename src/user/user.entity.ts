@@ -23,6 +23,9 @@ export class UserEntity {
     @Column()
     password: string;
 
+    @Column({ type: 'timestamp', nullable: true })
+    lastLogin?: Date | null;
+
     @Column({
         type: 'enum',
         enum: Role,
