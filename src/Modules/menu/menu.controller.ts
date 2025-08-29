@@ -21,10 +21,24 @@ export class MenuController {
       id: m.id,
       name: m.name,
       slug: m.slug,
-      description: m.description,
       createdAt: m.createdAt,
       updatedAt: m.updatedAt,
     }));
+  }
+
+  @Get('slug/:slug')
+  async findTreeBySlug(@Param('slug') slug: string) {
+    return await this.menuService.getMenuItemsBySlug(slug);
+  }
+
+  @Get('slug/:slug/tree')
+  async findMenuWithTree(@Param('slug') slug: string) {
+    return await this.menuService.getMenuWithTreeBySlug(slug);
+  }
+
+  @Get('tree')
+  async findAllWithItems() {
+    return await this.menuService.findAllMenusWithItems();
   }
 
   @Get(':id')
@@ -34,15 +48,9 @@ export class MenuController {
       id: m.id,
       name: m.name,
       slug: m.slug,
-      description: m.description,
       createdAt: m.createdAt,
       updatedAt: m.updatedAt,
     };
-  }
-
-  @Get('slug/:slug')
-  async findTreeBySlug(@Param('slug') slug: string) {
-    return await this.menuService.getMenuItemsBySlug(slug);
   }
 
   @Post()
@@ -55,7 +63,6 @@ export class MenuController {
       id: m.id,
       name: m.name,
       slug: m.slug,
-      description: m.description,
       createdAt: m.createdAt,
       updatedAt: m.updatedAt,
     };
@@ -71,7 +78,6 @@ export class MenuController {
       id: m.id,
       name: m.name,
       slug: m.slug,
-      description: m.description,
       createdAt: m.createdAt,
       updatedAt: m.updatedAt,
     };
@@ -101,10 +107,6 @@ export class MenuController {
       id: i.id,
       label: i.label,
       url: i.url ?? null,
-      pageSlug: i.pageSlug ?? null,
-      external: i.external,
-      target: i.target ?? null,
-      icon: i.icon ?? null,
       orderIndex: i.orderIndex,
       parentId: i.parent ? i.parent.id : null,
       createdAt: i.createdAt,
@@ -126,10 +128,6 @@ export class MenuController {
       id: i.id,
       label: i.label,
       url: i.url ?? null,
-      pageSlug: i.pageSlug ?? null,
-      external: i.external,
-      target: i.target ?? null,
-      icon: i.icon ?? null,
       orderIndex: i.orderIndex,
       parentId: i.parent ? i.parent.id : null,
       createdAt: i.createdAt,
@@ -145,4 +143,3 @@ export class MenuController {
     return { message: 'Menu item deleted' };
   }
 }
-

@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { MenuEntity } from '@/Modules/menu/menu.entity';
 import { MenuItemEntity } from '@/Modules/menu/menuItem.entity';
 import { CreateMenuDto } from '@/Modules/menu/dto/create-menu.dto';
@@ -23,7 +23,7 @@ export class MenuService {
     const nameExists = await this.menuRepository.findOne({ where: { name: dto.name } });
     if (nameExists) throw new HttpException('Menu name already exists', HttpStatus.UNPROCESSABLE_ENTITY);
     const slug = await this.generateUniqueSlug(dto.name);
-    const menu = this.menuRepository.create({ name: dto.name, slug, description: dto.description ?? '' });
+    const menu = this.menuRepository.create({ name: dto.name, slug });
     return await this.menuRepository.save(menu);
   }
 
@@ -52,7 +52,6 @@ export class MenuService {
       // Update slug to a unique one based on new name
       menu.slug = await this.generateUniqueSlug(dto.name, menu.id);
     }
-    if (dto.description !== undefined) menu.description = dto.description;
     return await this.menuRepository.save(menu);
   }
 
@@ -65,7 +64,7 @@ export class MenuService {
   async getMenuItems(menuId: number): Promise<any[]> {
     const menu = await this.findMenuById(menuId);
     const items = await this.menuItemRepository.find({
-      where: { menu },
+      where: { menu: { id: menu.id } },
       order: { orderIndex: 'ASC', id: 'ASC' },
       relations: ['parent'],
     });
@@ -92,6 +91,62 @@ export class MenuService {
     return this.getMenuItems(menu.id);
   }
 
+  async getMenuWithTreeBySlug(slug: string): Promise<any> {
+    const menu = await this.findMenuBySlug(slug);
+    const items = await this.getMenuItems(menu.id);
+    return {
+      menu: {
+        id: menu.id,
+        name: menu.name,
+        slug: menu.slug,
+        createdAt: menu.createdAt,
+        updatedAt: menu.updatedAt,
+      },
+      items,
+    };
+  }
+
+  async findAllMenusWithItems(): Promise<any[]> {
+    const menus = await this.menuRepository.find({ order: { createdAt: 'DESC' } });
+    if (!menus.length) return [];
+
+    const ids = menus.map((m) => m.id);
+    const items = await this.menuItemRepository.find({
+      where: { menu: { id: In(ids) } },
+      relations: ['parent', 'menu'],
+      order: { orderIndex: 'ASC', id: 'ASC' },
+    });
+
+    const byMenu = new Map<number, MenuItemEntity[]>();
+    items.forEach((it) => {
+      const mid = (it.menu as any)?.id ?? null;
+      if (!mid) return;
+      if (!byMenu.has(mid)) byMenu.set(mid, []);
+      byMenu.get(mid)!.push(it);
+    });
+
+    const buildTree = (list: MenuItemEntity[]) => {
+      const byId = new Map<number, any>();
+      const roots: any[] = [];
+      list.forEach((it) => byId.set(it.id, { ...this.mapItem(it), children: [] }));
+      list.forEach((it) => {
+        const node = byId.get(it.id);
+        if (it.parent && byId.has(it.parent.id)) byId.get(it.parent.id).children.push(node);
+        else roots.push(node);
+      });
+      return roots;
+    };
+
+    return menus.map((m) => ({
+      id: m.id,
+      name: m.name,
+      slug: m.slug,
+      createdAt: m.createdAt,
+      updatedAt: m.updatedAt,
+      items: buildTree(byMenu.get(m.id) || []),
+    }));
+  }
+
   async createMenuItem(menuId: number, dto: CreateMenuItemDto): Promise<MenuItemEntity> {
     const menu = await this.findMenuById(menuId);
     let parent: MenuItemEntity | null = null;
@@ -100,7 +155,7 @@ export class MenuService {
       if (!parent) throw new HttpException('Parent item not found', HttpStatus.BAD_REQUEST);
     }
 
-    if (!dto.url && !dto.pageSlug) {
+    if (!dto.url) {
       // Ensure at least one target
       dto.url = '#';
     }
@@ -113,10 +168,6 @@ export class MenuService {
       parent: parent ?? null,
       label: dto.label,
       url: dto.url ?? null,
-      pageSlug: dto.pageSlug ?? null,
-      external: dto.external ?? false,
-      target: dto.target ?? null,
-      icon: dto.icon ?? null,
       orderIndex,
     });
     return await this.menuItemRepository.save(item);
@@ -146,10 +197,6 @@ export class MenuService {
 
     if (dto.label !== undefined) item.label = dto.label;
     if (dto.url !== undefined) item.url = dto.url ?? null;
-    if (dto.pageSlug !== undefined) item.pageSlug = dto.pageSlug ?? null;
-    if (dto.external !== undefined) item.external = dto.external;
-    if (dto.target !== undefined) item.target = dto.target ?? null;
-    if (dto.icon !== undefined) item.icon = dto.icon ?? null;
     if (dto.orderIndex !== undefined) item.orderIndex = dto.orderIndex;
 
     return await this.menuItemRepository.save(item);
@@ -180,12 +227,8 @@ export class MenuService {
   }
 
   private async getNextOrderIndex(menu: MenuEntity, parentId?: number): Promise<number> {
-    const where: any = { menu };
-    if (parentId) {
-      where.parent = { id: parentId } as any;
-    } else {
-      where.parent = null;
-    }
+    const where: any = { menu: { id: menu.id } };
+    where.parent = parentId ? ({ id: parentId } as any) : null;
     const siblings = await this.menuItemRepository.find({ where });
     if (!siblings.length) return 0;
     const max = Math.max(...siblings.map((s) => s.orderIndex ?? 0));
@@ -197,10 +240,6 @@ export class MenuService {
       id: i.id,
       label: i.label,
       url: i.url ?? null,
-      pageSlug: i.pageSlug ?? null,
-      external: i.external,
-      target: i.target ?? null,
-      icon: i.icon ?? null,
       orderIndex: i.orderIndex,
       parentId: i.parent ? i.parent.id : null,
       createdAt: i.createdAt,

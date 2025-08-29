@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { CreateDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, Column } from 'typeorm';
 import { MenuItemEntity } from '@/Modules/menu/menuItem.entity';
 
 @Entity({ name: 'menus' })
@@ -12,9 +12,6 @@ export class MenuEntity {
   @Index({ unique: true })
   @Column({ unique: true, length: 140 })
   slug: string;
-
-  @Column({ type: 'text', nullable: true, default: '' })
-  description?: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
