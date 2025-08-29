@@ -1,6 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, OneToMany, JoinTable, ManyToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from "typeorm";
 import * as bcrypt from 'bcrypt';
-import { ArticleEntity } from "@/article/article.entity";
 import { Role } from "./enums/role.enum";
 //define the user entity with the columns
 @Entity({ name: 'users' })
@@ -34,13 +33,7 @@ export class UserEntity {
     role: Role;
 
 
-    //Relationships
-    @OneToMany(() => ArticleEntity, (article) => article.author)
-    articles: ArticleEntity[];
-
-    @ManyToMany(() => ArticleEntity)
-    @JoinTable()
-    favorites: ArticleEntity[];
+    // Relationships removed: articles, favorites
 
     @BeforeInsert()
     async hashPassword() {

@@ -12,7 +12,8 @@ import { RolesGuard } from "./guards/roles.guard";
         JwtModule.register({
             global: true,
             secret: process.env.JWT_SECRET as string,
-            signOptions: {expiresIn: '60s'},
+            // Align with access token TTL used in UserService (15m)
+            signOptions: {expiresIn: '1h'},
         }),],
     controllers: [UserController],
     providers: [UserService, RolesGuard],

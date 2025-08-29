@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Param, Post, Put, Res, UseGuards, UsePipes, ValidationPipe} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, Res, UseGuards, UsePipes, ValidationPipe, UnauthorizedException, Req} from '@nestjs/common';
 import {UserService} from './user.service';
 import {CreateUserDto} from './dto/createUser.dto';
 import {IUserResponse} from './types/userResponse.interface';
@@ -11,6 +11,7 @@ import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guards/roles.guard';
 import { Role } from './enums/role.enum';
 import { AdminCreateUserDto } from './dto/adminCreateUser.dto';
+import { verify } from 'jsonwebtoken';
 
 @Controller()
 export class UserController {
@@ -81,7 +82,49 @@ export class UserController {
     async logout(@Res({passthrough: true}) res: express.Response) {
         // Clear the cookie by name and path (must match how it was set)
         res.clearCookie('access_token', {path: '/'});
+        res.clearCookie('refresh_token', {path: '/'});
         return {ok: true};
+    }
+
+    // Refresh access token using refresh token cookie
+    @Post('refresh')
+    async refresh(
+        @Req() req: express.Request,
+        @Res({ passthrough: true }) res: express.Response,
+    ): Promise<IUserResponse> {
+        const refreshCookie = (req as any).cookies?.['refresh_token'] as string | undefined;
+        if (!refreshCookie) throw new UnauthorizedException('Missing refresh token');
+
+        try {
+            const secret = (process.env.JWT_REFRESH_SECRET as string) || (process.env.JWT_SECRET as string);
+            const decoded: any = verify(refreshCookie, secret);
+            if (!decoded || decoded.type !== 'refresh' || !decoded.id) {
+                throw new UnauthorizedException('Invalid refresh token');
+            }
+
+            const user = await this.userService.findById(Number(decoded.id));
+            const response = this.userService.generateUserResponse(user);
+
+            // Re-issue cookies
+            res.cookie('access_token', response.user.token, {
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: false,
+                path: '/',
+                maxAge: 15 * 60 * 1000, // 15 minutes
+            });
+            res.cookie('refresh_token', (response.user as any).refreshToken, {
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: false,
+                path: '/',
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            });
+
+            return response;
+        } catch (e) {
+            throw new UnauthorizedException('Expired or invalid refresh token');
+        }
     }
     //Get all users
     @Get('users')

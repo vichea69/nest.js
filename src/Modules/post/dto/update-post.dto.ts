@@ -1,0 +1,34 @@
+import { IsEnum, IsInt, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
+import { PostStatus } from '@/Modules/post/post.entity';
+import { Transform, Type } from 'class-transformer';
+
+export class UpdatePostDto {
+  @IsString()
+  @IsOptional()
+  @MaxLength(200)
+  title?: string;
+
+  @IsString()
+  @IsOptional()
+  content?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => (value === '' ? undefined : value))
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(2147483647)
+  categoryId?: number;
+
+  @IsOptional()
+  @Transform(({ value }) => (value === '' ? undefined : value))
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(2147483647)
+  pageId?: number;
+
+  @IsOptional()
+  @IsEnum(PostStatus)
+  status?: PostStatus;
+}

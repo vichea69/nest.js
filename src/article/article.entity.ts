@@ -27,14 +27,12 @@ export class ArticleEntity {
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     updatedAt: Date;
 
-    @Column({ default: 0 })
-    favoritesCount: number;
 
-    @Column()
-    authorId: number;
+    @Column({ nullable: true })
+    authorId: number | null;
 
     //Relationships
-    @ManyToOne(() => UserEntity, (user) => user.articles, { eager: true })
+    @ManyToOne(() => UserEntity, { eager: true, onDelete: 'SET NULL' })
     @JoinColumn({ name: 'authorId' })
     author: UserEntity;
 

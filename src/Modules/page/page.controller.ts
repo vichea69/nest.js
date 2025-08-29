@@ -57,7 +57,12 @@ export class PageController {
     @Query('includeDrafts') includeDrafts?: string,
     @User() user?: UserEntity,
   ) {
-    const canViewDrafts = (user?.role === Role.Admin || user?.role === Role.Editor) && String(includeDrafts).toLowerCase() === 'true';
+    const isPrivileged = user?.role === Role.Admin || user?.role === Role.Editor;
+    const wantsDrafts = ['true','1','yes','y'].includes(String(includeDrafts).toLowerCase());
+    // Allow drafts if:
+    // - Admin/Editor (default, unless includeDrafts=false), or
+    // - Client explicitly asks via includeDrafts=true (useful for previews)
+    const canViewDrafts = (isPrivileged && (includeDrafts === undefined || wantsDrafts)) || (!isPrivileged && wantsDrafts);
     const p = await this.pageService.findBySlug(slug, canViewDrafts);
     return {
       id: p.id,

@@ -14,8 +14,6 @@ export class ArticleService {
     constructor(
         @InjectRepository(ArticleEntity)
         private readonly articleRepository: Repository<ArticleEntity>,
-        @InjectRepository(UserEntity)
-        private readonly userRepository: Repository<UserEntity>,
     ) { }
 
     //get all articles
@@ -28,20 +26,7 @@ export class ArticleService {
             queryBuilder.andWhere(':tag = ANY(string_to_array(articles.tagList, ","))', { tag: String(query.tag) });
         }
 
-        // Optional filtering by favorited=username
-        if (query.favorited) {
-            const favoritedUser = await this.userRepository
-                .createQueryBuilder('user')
-                .leftJoinAndSelect('user.favorites', 'favorites')
-                .where('LOWER(user.username) = LOWER(:username)', { username: String(query.favorited) })
-                .getOne();
-
-            const favoriteIds = favoritedUser?.favorites?.map((a) => a.id) ?? [];
-            if (favoriteIds.length === 0) {
-                return { articles: [], articlesCount: 0 };
-            }
-            queryBuilder.andWhere('articles.id IN (:...favoriteIds)', { favoriteIds });
-        }
+        // Removed favorited filter since favorites relation is removed
 
         // Pagination
         const limit = Math.min(Number(query.limit) || 20, 50);
@@ -132,92 +117,5 @@ export class ArticleService {
 
         return await this.articleRepository.save(article);
     }
-    // add to favorite article
-    async addToFavoriteArticle(slug: string, currentUserId: number): Promise<ArticleEntity> {
-        const user = await this.userRepository.findOne({
-            where: { id: currentUserId },
-            relations: ['favorites'],
-        });
-
-        if (!user) {
-            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-        }
-
-        const article = await this.findBySlug(slug);
-
-        const isAlreadyFavorited = Array.isArray(user.favorites)
-            ? user.favorites.some((fav) => fav.id === article.id)
-            : false;
-
-        if (!isAlreadyFavorited) {
-            user.favorites = Array.isArray(user.favorites) ? user.favorites : [];
-            user.favorites.push(article);
-            await this.userRepository.save(user);
-
-            article.favoritesCount = (article.favoritesCount || 0) + 1;
-            await this.articleRepository.save(article);
-        }
-
-        return article;
-    }
-    // remove from favorite article
-    async removeFromFavoriteArticle(slug: string, currentUserId: number): Promise<ArticleEntity> {
-        const user = await this.userRepository.findOne({
-            where: { id: currentUserId },
-            relations: ['favorites'],
-        });
-
-        if (!user) {
-            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-        }
-
-        const article = await this.findBySlug(slug);
-
-        const isFavorited = Array.isArray(user.favorites)
-            ? user.favorites.some((fav) => fav.id === article.id)
-            : false;
-
-        if (isFavorited) {
-            user.favorites = Array.isArray(user.favorites) ? user.favorites : [];
-            user.favorites = user.favorites.filter((fav) => fav.id !== article.id);
-            await this.userRepository.save(user);
-
-            article.favoritesCount = (article.favoritesCount || 0) - 1;
-            await this.articleRepository.save(article);
-        }
-
-        return article;
-    }
-
-    async findFavoritesByUser(currentUserId: number, query: any): Promise<ArticlesResponseInterface> {
-        const user = await this.userRepository.findOne({
-            where: { id: currentUserId },
-            relations: ['favorites'],
-        });
-
-        if (!user) {
-            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-        }
-
-        const favoriteIds = user.favorites?.map((a) => a.id) ?? [];
-        if (favoriteIds.length === 0) {
-            return { articles: [], articlesCount: 0 };
-        }
-
-        const queryBuilder = this.articleRepository.createQueryBuilder('articles');
-        queryBuilder.leftJoinAndSelect('articles.author', 'author');
-        queryBuilder.andWhere('articles.id IN (:...favoriteIds)', { favoriteIds });
-
-        // Pagination
-        const limit = Math.min(Number(query.limit) || 20, 50);
-        const offset = Number(query.offset) || 0;
-        queryBuilder.take(limit).skip(offset);
-
-        const [articles, articlesCount] = await Promise.all([
-            queryBuilder.getMany(),
-            queryBuilder.getCount(),
-        ]);
-
-        return { articles, articlesCount };
-    }
+    // Favorite-related features removed
 }

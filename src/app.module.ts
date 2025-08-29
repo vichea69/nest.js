@@ -11,6 +11,7 @@ import {ProfileModule} from './profile/profile.module';
 import {CategoryModule} from "@/Modules/category/category.module";
 import { PageModule } from '@/Modules/page/page.module';
 import { MenuModule } from '@/Modules/menu/menu.module';
+import { PostModule } from '@/Modules/post/post.module';
 
 
 @Module({
@@ -25,7 +26,8 @@ import { MenuModule } from '@/Modules/menu/menu.module';
         ProfileModule,
         CategoryModule,
         PageModule,
-        MenuModule
+        MenuModule,
+        PostModule
     ],
     controllers: [AppController],
     providers: [AppService],

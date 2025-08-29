@@ -161,7 +161,7 @@ export class UserService {
         type: 'access',
       },
       process.env.JWT_SECRET as string,
-      { expiresIn: '15m' }
+      { expiresIn: '1h' }
     );
   }
 
@@ -183,15 +183,18 @@ export class UserService {
   }
 
   generateUserResponse(user: UserEntity): IUserResponse {
-    // if (!user) {
-    //   throw new HttpException('User not found', HttpStatus.UNPROCESSABLE_ENTITY);
-    // }
     return {
       user: {
-        ...user,
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        bio: user.bio,
+        image: user.image,
+        role: user.role,
+        lastLogin: user.lastLogin,
         token: this.generateToken(user),
         refreshToken: this.generateRefreshToken(user),
       }
-    }
+    };
   }
 }

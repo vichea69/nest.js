@@ -57,27 +57,23 @@ export class PageService {
   }
 
   async findBySlug(slug: string, includeDrafts = false): Promise<PageEntity> {
-    const where: any = { slug };
-    if (!includeDrafts) where.status = PageStatus.Published;
-    const page = await this.pageRepository.findOne({ where, relations: ['author'] });
-    if (!page) {
+    // First, try to find by slug only (independent of status)
+    const anyPage = await this.pageRepository.findOne({ where: { slug }, relations: ['author'] });
+    if (!anyPage) {
       throw new HttpException('Page not found', HttpStatus.NOT_FOUND);
     }
-    return page;
+    // If drafts are not allowed and the page is draft, hide it
+    if (!includeDrafts && anyPage.status !== PageStatus.Published) {
+      throw new HttpException('Page not found', HttpStatus.NOT_FOUND);
+    }
+    return anyPage;
   }
 
   async update(slug: string, dto: UpdatePageDto): Promise<PageEntity> {
-    const page = await this.findBySlug(slug);
+    // Include drafts when updating; editors often update unpublished pages
+    const page = await this.findBySlug(slug, true);
 
-    // Handle title change -> regenerate slug if changed
-    if (dto.title && dto.title.trim() && dto.title !== page.title) {
-      const newSlug = this.generateSlug(dto.title);
-      const exists = await this.pageRepository.findOne({ where: { slug: newSlug } });
-      if (exists && exists.id !== page.id) {
-        throw new HttpException('Page slug already exists', HttpStatus.UNPROCESSABLE_ENTITY);
-      }
-      page.slug = newSlug;
-    }
+    // Do NOT auto-regenerate slug on title change to avoid breaking links
 
     if (dto.status && dto.status !== page.status) {
       if (dto.status === PageStatus.Published && !page.publishedAt) {

@@ -56,29 +56,6 @@ export class ArticleController {
         const updated = await this.articleService.updateArticle(slug, user.id, updateDto);
         return this.articleService.getArticleResponse(updated);
     }
-    // add to favorite article
-    @Post('articles/:slug/favorite')
-    @UseGuards(AuthGuard, RolesGuard)
-    @Roles(Role.Admin, Role.Editor, Role.User)
-    async addToFavoriteArticle(@Param('slug') slug: string, @User() user: UserEntity) {
-        const article = await this.articleService.addToFavoriteArticle(slug, user.id);
-        return this.articleService.getArticleResponse(article);
-    }
-
-    // remove from favorite article
-    @Delete('articles/:slug/favorite')
-    @UseGuards(AuthGuard, RolesGuard)
-    @Roles(Role.Admin, Role.Editor, Role.User)
-    async removeFromFavoriteArticle(@Param('slug') slug: string, @User() user: UserEntity) {
-        const article = await this.articleService.removeFromFavoriteArticle(slug, user.id);
-        return this.articleService.getArticleResponse(article);
-    }
-
-    // get current user's favorite articles
-    @Get('articles/favorites')
-    @UseGuards(AuthGuard)
-    async getMyFavoriteArticles(@User() user: UserEntity, @Query() query: any) {
-        return await this.articleService.findFavoritesByUser(user.id, query);
-    }
+    // Favorite-related routes removed
 
 }

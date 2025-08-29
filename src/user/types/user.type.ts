@@ -1,3 +1,5 @@
 import { UserEntity } from "../user.entity";
 
-export type UserType = Omit<UserEntity, 'hashPassword'>;
+// Expose a safe subset of UserEntity fields to API consumers.
+// Remove sensitive or heavy relations: password, articles, favorites.
+export type UserType = Omit<UserEntity, 'hashPassword' | 'password' | 'articles' | 'favorites'>;
