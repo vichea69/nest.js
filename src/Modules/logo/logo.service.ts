@@ -22,7 +22,8 @@ export class LogoService {
     return logo;
   }
   async findAll(): Promise<LogoEntity[]> {
-    return await this.logoRepository.find();
+    // Ensure stable ordering by id (ascending)
+    return await this.logoRepository.find({ order: { id: 'ASC' } });
   }
   async getCurrentOrNull(): Promise<LogoEntity | null> {
     const [logo] = await this.logoRepository.find({ order: { createdAt: 'DESC' }, take: 1 });
@@ -35,9 +36,19 @@ export class LogoService {
     return logo;
   }
 
-  async updateById(id: number, dto: UpdateLogoDto): Promise<LogoEntity> {
+  async updateById(id: number, dto: UpdateLogoDto, file?: any): Promise<LogoEntity> {
     const logo = await this.findById(id);
-    if (dto.url !== undefined) logo.url = dto.url;
+
+    // If a new file is provided, upload and replace URL
+    if (file && file.buffer) {
+      const key = this.generateObjectKey(file.originalname);
+      const url = await this.s3.uploadObject({ key, body: file.buffer, contentType: file.mimetype });
+      logo.url = url;
+    } else if (dto.url !== undefined) {
+      // Otherwise allow direct URL update from DTO
+      logo.url = dto.url;
+    }
+
     if (dto.title !== undefined) logo.title = dto.title ?? null;
     return await this.logoRepository.save(logo);
   }

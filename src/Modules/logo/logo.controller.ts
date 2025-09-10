@@ -46,8 +46,18 @@ export class LogoController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Editor)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
-  async update(@Param('id') id: string, @Body() dto: UpdateLogoDto): Promise<LogoResponseInterface> {
-    const logo = await this.logoService.updateById(Number(id), dto);
+  @UseInterceptors(
+    FileInterceptor('logo', {
+      storage: memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
+  async update(
+    @Param('id') id: string,
+    @UploadedFile() file: any,
+    @Body() dto: UpdateLogoDto,
+  ): Promise<LogoResponseInterface> {
+    const logo = await this.logoService.updateById(Number(id), dto, file);
     return { logo };
   }
 
