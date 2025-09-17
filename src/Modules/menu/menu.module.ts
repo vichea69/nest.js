@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MenuEntity } from '@/Modules/menu/menu.entity';
-import { MenuItemEntity } from '@/Modules/menu/menuItem.entity';
-import { MenuService } from '@/Modules/menu/menu.service';
-import { MenuController } from '@/Modules/menu/menu.controller';
-import { RolesGuard } from '@/user/guards/roles.guard';
+import { MenuEntity } from '@/modules/menu/menu.entity';
+import { MenuItemEntity } from '@/modules/menu/menuItem.entity';
+import { MenuService } from '@/modules/menu/menu.service';
+import { MenuController } from '@/modules/menu/menu.controller';
+import { RolesGuard } from '@/modules/auth/guards/roles.guard';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MenuEntity, MenuItemEntity])],

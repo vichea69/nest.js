@@ -1,13 +1,13 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
-import { PageService } from '@/Modules/page/page.service';
-import { CreatePageDto } from '@/Modules/page/dto/create-page.dto';
-import { UpdatePageDto } from '@/Modules/page/dto/update-page.dto';
-import { AuthGuard } from '@/user/guards/auth.guard';
-import { RolesGuard } from '@/user/guards/roles.guard';
-import { Roles } from '@/user/decorators/roles.decorator';
-import { Role } from '@/user/enums/role.enum';
-import { User } from '@/user/decorators/user.decorator';
-import { UserEntity } from '@/user/user.entity';
+import { PageService } from '@/modules/page/page.service';
+import { CreatePageDto } from '@/modules/page/dto/create-page.dto';
+import { UpdatePageDto } from '@/modules/page/dto/update-page.dto';
+import { AuthGuard } from '@/modules/auth/guards/auth.guard';
+import { RolesGuard } from '@/modules/auth/guards/roles.guard';
+import { Roles } from '@/modules/auth/decorators/roles.decorator';
+import { Role } from '@/modules/auth/enums/role.enum';
+import { User } from '@/modules/auth/decorators/user.decorator';
+import { UserEntity } from '@/modules/users/entities/user.entity';
 
 @Controller('pages')
 export class PageController {

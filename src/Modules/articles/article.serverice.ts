@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { CreateArticleDto } from "./dto/createArticle.dto";
 import { UpdateArticleDto } from "./dto/updateArticle.dto";
 import { ArticleEntity } from "./article.entity";
-import { UserEntity } from "@/user/user.entity";
+import { UserEntity } from "@/modules/users/entities/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ArticleResponseInterface } from "./types/articleResponse.interface";

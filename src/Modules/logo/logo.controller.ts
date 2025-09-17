@@ -1,15 +1,15 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
-import { LogoService } from '@/Modules/logo/logo.service';
-import { UpdateLogoDto } from '@/Modules/logo/dto/update-logo.dto';
-import { AuthGuard } from '@/user/guards/auth.guard';
-import { RolesGuard } from '@/user/guards/roles.guard';
-import { Roles } from '@/user/decorators/roles.decorator';
-import { Role } from '@/user/enums/role.enum';
-import { LogoResponseInterface } from '@/Modules/logo/types/logoResponse.interface';
-import { LogosResponseInterface } from '@/Modules/logo/types/logosResponse.interface';
+import { LogoService } from '@/modules/logo/logo.service';
+import { UpdateLogoDto } from '@/modules/logo/dto/update-logo.dto';
+import { AuthGuard } from '@/modules/auth/guards/auth.guard';
+import { RolesGuard } from '@/modules/auth/guards/roles.guard';
+import { Roles } from '@/modules/auth/decorators/roles.decorator';
+import { Role } from '@/modules/auth/enums/role.enum';
+import { LogoResponseInterface } from '@/modules/logo/types/logoResponse.interface';
+import { LogosResponseInterface } from '@/modules/logo/types/logosResponse.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { UploadLogoDto } from '@/Modules/logo/dto/upload-logo.dto';
+import { UploadLogoDto } from '@/modules/logo/dto/upload-logo.dto';
 
 @Controller('logo')
 export class LogoController {

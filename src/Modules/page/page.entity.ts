@@ -1,5 +1,5 @@
 import {BeforeUpdate, Column, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn,} from 'typeorm';
-import {UserEntity} from '@/user/user.entity';
+import {UserEntity} from '@/modules/users/entities/user.entity';
 
 export enum PageStatus {
     Draft = 'draft',

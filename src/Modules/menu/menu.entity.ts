@@ -1,5 +1,5 @@
 import { CreateDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, Column } from 'typeorm';
-import { MenuItemEntity } from '@/Modules/menu/menuItem.entity';
+import { MenuItemEntity } from '@/modules/menu/menuItem.entity';
 
 @Entity({ name: 'menus' })
 export class MenuEntity {

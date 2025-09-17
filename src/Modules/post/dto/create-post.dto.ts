@@ -1,5 +1,5 @@
 import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
-import { PostStatus } from '@/Modules/post/post.entity';
+import { PostStatus } from '@/modules/post/post.entity';
 import { Transform, Type } from 'class-transformer';
 
 export class CreatePostDto {

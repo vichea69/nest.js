@@ -15,15 +15,15 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { PostService } from '@/Modules/post/post.service';
-import { CreatePostDto } from '@/Modules/post/dto/create-post.dto';
-import { UpdatePostDto } from '@/Modules/post/dto/update-post.dto';
-import { AuthGuard } from '@/user/guards/auth.guard';
-import { RolesGuard } from '@/user/guards/roles.guard';
-import { Roles } from '@/user/decorators/roles.decorator';
-import { Role } from '@/user/enums/role.enum';
-import { User } from '@/user/decorators/user.decorator';
-import { UserEntity } from '@/user/user.entity';
+import { PostService } from '@/modules/post/post.service';
+import { CreatePostDto } from '@/modules/post/dto/create-post.dto';
+import { UpdatePostDto } from '@/modules/post/dto/update-post.dto';
+import { AuthGuard } from '@/modules/auth/guards/auth.guard';
+import { RolesGuard } from '@/modules/auth/guards/roles.guard';
+import { Roles } from '@/modules/auth/decorators/roles.decorator';
+import { Role } from '@/modules/auth/enums/role.enum';
+import { User } from '@/modules/auth/decorators/user.decorator';
+import { UserEntity } from '@/modules/users/entities/user.entity';
 
 @Controller('posts')
 export class PostController {

@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { CategoryEntity } from "@/Modules/category/category.entity";
-import { CreateCategoryDto } from "@/Modules/category/dto/create-category.dto";
-import { UpdateCategoryDto } from "@/Modules/category/dto/update-category.dto";
-import { UserEntity } from "@/user/user.entity";
+import { CategoryEntity } from "@/modules/category/category.entity";
+import { CreateCategoryDto } from "@/modules/category/dto/create-category.dto";
+import { UpdateCategoryDto } from "@/modules/category/dto/update-category.dto";
+import { UserEntity } from "@/modules/users/entities/user.entity";
 
 @Injectable()
 export class CategoryService {

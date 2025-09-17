@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PostEntity, PostStatus } from '@/Modules/post/post.entity';
+import { PostEntity, PostStatus } from '@/modules/post/post.entity';
 import slugify from 'slugify';
-import { CreatePostDto } from '@/Modules/post/dto/create-post.dto';
-import { UpdatePostDto } from '@/Modules/post/dto/update-post.dto';
-import { UserEntity } from '@/user/user.entity';
-import { R2Service } from '@/Modules/post/r2.service';
-import { CategoryEntity } from '@/Modules/category/category.entity';
-import { PageEntity } from '@/Modules/page/page.entity';
+import { CreatePostDto } from '@/modules/post/dto/create-post.dto';
+import { UpdatePostDto } from '@/modules/post/dto/update-post.dto';
+import { UserEntity } from '@/modules/users/entities/user.entity';
+import { R2Service } from '@/modules/post/r2.service';
+import { CategoryEntity } from '@/modules/category/category.entity';
+import { PageEntity } from '@/modules/page/page.entity';
 
 @Injectable()
 export class PostService {

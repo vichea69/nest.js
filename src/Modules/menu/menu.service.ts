@@ -1,12 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { MenuEntity } from '@/Modules/menu/menu.entity';
-import { MenuItemEntity } from '@/Modules/menu/menuItem.entity';
-import { CreateMenuDto } from '@/Modules/menu/dto/create-menu.dto';
-import { UpdateMenuDto } from '@/Modules/menu/dto/update-menu.dto';
-import { CreateMenuItemDto } from '@/Modules/menu/dto/create-menu-item.dto';
-import { UpdateMenuItemDto } from '@/Modules/menu/dto/update-menu-item.dto';
+import { MenuEntity } from '@/modules/menu/menu.entity';
+import { MenuItemEntity } from '@/modules/menu/menuItem.entity';
+import { CreateMenuDto } from '@/modules/menu/dto/create-menu.dto';
+import { UpdateMenuDto } from '@/modules/menu/dto/update-menu.dto';
+import { CreateMenuItemDto } from '@/modules/menu/dto/create-menu-item.dto';
+import { UpdateMenuItemDto } from '@/modules/menu/dto/update-menu-item.dto';
 import slugify from 'slugify';
 
 @Injectable()

@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
-import { CategoryController } from "@/Modules/category/category.controller";
-import { CategoryService } from "@/Modules/category/category.service";
+import { CategoryController } from "@/modules/category/category.controller";
+import { CategoryService } from "@/modules/category/category.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { CategoryEntity } from "@/Modules/category/category.entity";
-import { RolesGuard } from "@/user/guards/roles.guard";
+import { CategoryEntity } from "@/modules/category/category.entity";
+import { RolesGuard } from "@/modules/auth/guards/roles.guard";
 
 @Module(
     {

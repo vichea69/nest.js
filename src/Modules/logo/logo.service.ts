@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { LogoEntity } from '@/Modules/logo/logo.entity';
-import { UpdateLogoDto } from '@/Modules/logo/dto/update-logo.dto';
-import { UploadLogoDto } from '@/Modules/logo/dto/upload-logo.dto';
-import { S3Service } from '@/Modules/logo/s3.service';
+import { LogoEntity } from '@/modules/logo/logo.entity';
+import { UpdateLogoDto } from '@/modules/logo/dto/update-logo.dto';
+import { UploadLogoDto } from '@/modules/logo/dto/upload-logo.dto';
+import { S3Service } from '@/modules/logo/s3.service';
 
 @Injectable()
 export class LogoService {

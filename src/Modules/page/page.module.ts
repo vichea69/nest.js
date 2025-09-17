@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PageEntity } from '@/Modules/page/page.entity';
-import { PageService } from '@/Modules/page/page.service';
-import { PageController } from '@/Modules/page/page.controller';
-import { RolesGuard } from '@/user/guards/roles.guard';
+import { PageEntity } from '@/modules/page/page.entity';
+import { PageService } from '@/modules/page/page.service';
+import { PageController } from '@/modules/page/page.controller';
+import { RolesGuard } from '@/modules/auth/guards/roles.guard';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PageEntity])],

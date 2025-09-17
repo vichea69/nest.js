@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { CreateArticleDto } from "./dto/createArticle.dto";
 import { ArticleService } from "./article.serverice";
-import { UserEntity } from "@/user/user.entity";
-import { User } from "@/user/decorators/user.decorator";
-import { AuthGuard } from "@/user/guards/auth.guard";
-import { Roles } from "@/user/decorators/roles.decorator";
-import { RolesGuard } from "@/user/guards/roles.guard";
-import { Role } from "@/user/enums/role.enum";
+import { UserEntity } from "@/modules/users/entities/user.entity";
+import { User } from "@/modules/auth/decorators/user.decorator";
+import { AuthGuard } from "@/modules/auth/guards/auth.guard";
+import { Roles } from "@/modules/auth/decorators/roles.decorator";
+import { RolesGuard } from "@/modules/auth/guards/roles.guard";
+import { Role } from "@/modules/auth/enums/role.enum";
 
 @Controller()
 export class ArticleController {

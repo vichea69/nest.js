@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PageEntity, PageStatus } from '@/Modules/page/page.entity';
-import { CreatePageDto } from '@/Modules/page/dto/create-page.dto';
-import { UpdatePageDto } from '@/Modules/page/dto/update-page.dto';
+import { PageEntity, PageStatus } from '@/modules/page/page.entity';
+import { CreatePageDto } from '@/modules/page/dto/create-page.dto';
+import { UpdatePageDto } from '@/modules/page/dto/update-page.dto';
 import slugify from 'slugify';
-import { UserEntity } from '@/user/user.entity';
+import { UserEntity } from '@/modules/users/entities/user.entity';
 
 @Injectable()
 export class PageService {

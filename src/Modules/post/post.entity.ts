@@ -7,9 +7,9 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import {UserEntity} from '@/user/user.entity';
-import {CategoryEntity} from '@/Modules/category/category.entity';
-import {PageEntity} from '@/Modules/page/page.entity';
+import {UserEntity} from '@/modules/users/entities/user.entity';
+import {CategoryEntity} from '@/modules/category/category.entity';
+import {PageEntity} from '@/modules/page/page.entity';
 
 export enum PostStatus {
     Draft = 'draft',

@@ -1,4 +1,4 @@
-import { PageEntity } from '@/Modules/page/page.entity';
+import { PageEntity } from '@/modules/page/page.entity';
 
 export interface PageResponseInterface {
   page: PageEntity;

@@ -1,13 +1,13 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
-import { MenuService } from '@/Modules/menu/menu.service';
-import { CreateMenuDto } from '@/Modules/menu/dto/create-menu.dto';
-import { UpdateMenuDto } from '@/Modules/menu/dto/update-menu.dto';
-import { CreateMenuItemDto } from '@/Modules/menu/dto/create-menu-item.dto';
-import { UpdateMenuItemDto } from '@/Modules/menu/dto/update-menu-item.dto';
-import { AuthGuard } from '@/user/guards/auth.guard';
-import { RolesGuard } from '@/user/guards/roles.guard';
-import { Roles } from '@/user/decorators/roles.decorator';
-import { Role } from '@/user/enums/role.enum';
+import { MenuService } from '@/modules/menu/menu.service';
+import { CreateMenuDto } from '@/modules/menu/dto/create-menu.dto';
+import { UpdateMenuDto } from '@/modules/menu/dto/update-menu.dto';
+import { CreateMenuItemDto } from '@/modules/menu/dto/create-menu-item.dto';
+import { UpdateMenuItemDto } from '@/modules/menu/dto/update-menu-item.dto';
+import { AuthGuard } from '@/modules/auth/guards/auth.guard';
+import { RolesGuard } from '@/modules/auth/guards/roles.guard';
+import { Roles } from '@/modules/auth/decorators/roles.decorator';
+import { Role } from '@/modules/auth/enums/role.enum';
 
 @Controller('menus')
 export class MenuController {

@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PostEntity } from '@/Modules/post/post.entity';
-import { PostService } from '@/Modules/post/post.service';
-import { PostController } from '@/Modules/post/post.controller';
-import { RolesGuard } from '@/user/guards/roles.guard';
-import { R2Service } from '@/Modules/post/r2.service';
-import { CategoryEntity } from '@/Modules/category/category.entity';
-import { PageEntity } from '@/Modules/page/page.entity';
+import { PostEntity } from '@/modules/post/post.entity';
+import { PostService } from '@/modules/post/post.service';
+import { PostController } from '@/modules/post/post.controller';
+import { RolesGuard } from '@/modules/auth/guards/roles.guard';
+import { R2Service } from '@/modules/post/r2.service';
+import { CategoryEntity } from '@/modules/category/category.entity';
+import { PageEntity } from '@/modules/page/page.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PostEntity, CategoryEntity, PageEntity])],

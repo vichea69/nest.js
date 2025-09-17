@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
-import { PageStatus } from '@/Modules/page/page.entity';
+import { PageStatus } from '@/modules/page/page.entity';
 
 export class CreatePageDto {
   @IsString()

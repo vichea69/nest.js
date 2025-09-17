@@ -1,5 +1,5 @@
-import { IsEmail, IsEnum, IsNotEmpty } from "class-validator";
-import { Role } from "../enums/role.enum";
+import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
+import { Role } from '../../auth/enums/role.enum';
 
 export class AdminCreateUserDto {
     @IsNotEmpty()
@@ -15,5 +15,4 @@ export class AdminCreateUserDto {
     @IsEnum(Role)
     readonly role: Role;
 }
-
 

@@ -1,13 +1,13 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
-import { CategoryService } from "@/Modules/category/category.service";
-import { CreateCategoryDto } from "@/Modules/category/dto/create-category.dto";
-import { UpdateCategoryDto } from "@/Modules/category/dto/update-category.dto";
-import { AuthGuard } from "@/user/guards/auth.guard";
-import { RolesGuard } from "@/user/guards/roles.guard";
-import { Roles } from "@/user/decorators/roles.decorator";
-import { Role } from "@/user/enums/role.enum";
-import { User } from "@/user/decorators/user.decorator";
-import { UserEntity } from "@/user/user.entity";
+import { CategoryService } from "@/modules/category/category.service";
+import { CreateCategoryDto } from "@/modules/category/dto/create-category.dto";
+import { UpdateCategoryDto } from "@/modules/category/dto/update-category.dto";
+import { AuthGuard } from "@/modules/auth/guards/auth.guard";
+import { RolesGuard } from "@/modules/auth/guards/roles.guard";
+import { Roles } from "@/modules/auth/decorators/roles.decorator";
+import { Role } from "@/modules/auth/enums/role.enum";
+import { User } from "@/modules/auth/decorators/user.decorator";
+import { UserEntity } from "@/modules/users/entities/user.entity";
 
 
 @Controller("categories")

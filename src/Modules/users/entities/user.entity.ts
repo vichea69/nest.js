@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Role } from "./enums/role.enum";
+import { Role } from '../../auth/enums/role.enum';
 //define the user entity with the columns
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -25,15 +25,18 @@ export class UserEntity {
     @Column({ type: 'timestamp', nullable: true })
     lastLogin?: Date | null;
 
+    @Column({ type: 'text', nullable: true })
+    resetPasswordToken: string | null = null;
+
+    @Column({ type: 'timestamp', nullable: true })
+    resetPasswordTokenExpiresAt: Date | null = null;
+
     @Column({
         type: 'enum',
         enum: Role,
         default: Role.User,
     })
     role: Role;
-
-
-    // Relationships removed: articles, favorites
 
     @BeforeInsert()
     async hashPassword() {

@@ -3,14 +3,15 @@ import {AppController} from './app.controller';
 import {AppService} from './app.service';
 import {TypeOrmModule} from "@nestjs/typeorm";
 import ormconfig from "@/ormconfig";
-import {UserModule} from './user/user.module';
+import { AuthModule } from '@/modules/auth/auth.module';
+import { UsersModule } from '@/modules/users/users.module';
 import {ConfigModule} from '@nestjs/config';
-import {ArticleModule} from './article/article.module';
-import {CategoryModule} from "@/Modules/category/category.module";
-import { PageModule } from '@/Modules/page/page.module';
-import { MenuModule } from '@/Modules/menu/menu.module';
-import { PostModule } from '@/Modules/post/post.module';
-import { LogoModule } from '@/Modules/logo/logo.module';
+import {ArticleModule} from '@/modules/articles/article.module';
+import {CategoryModule} from "@/modules/category/category.module";
+import { PageModule } from '@/modules/page/page.module';
+import { MenuModule } from '@/modules/menu/menu.module';
+import { PostModule } from '@/modules/post/post.module';
+import { LogoModule } from '@/modules/logo/logo.module';
 
 
 @Module({
@@ -19,7 +20,8 @@ import { LogoModule } from '@/Modules/logo/logo.module';
         ConfigModule.forRoot({
             isGlobal: true,
         }),
-        UserModule,
+        AuthModule,
+        UsersModule,
         ArticleModule,
         CategoryModule,
         PageModule,
