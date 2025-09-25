@@ -24,7 +24,8 @@ export class MailerService {
     const trimmedBase = this.frontendBaseUrl.endsWith('/')
       ? this.frontendBaseUrl.slice(0, -1)
       : this.frontendBaseUrl;
-    const resetUrl = `${trimmedBase}/reset-password?token=${token}`;
+     const resetUrl = `${trimmedBase}/auth/reset-password?token=${token}`;
+    //const resetUrl = `${trimmedBase}/auth/reset-password`;
 
     try {
       const response = await fetchFn('https://api.resend.com/emails', {
