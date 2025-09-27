@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
+import { IsArray, IsEnum, IsInt, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
 import { PostStatus } from '@/modules/post/post.entity';
 import { Transform, Type } from 'class-transformer';
 
@@ -31,4 +31,34 @@ export class UpdatePostDto {
   @IsOptional()
   @IsEnum(PostStatus)
   status?: PostStatus;
+
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === undefined || value === null || value === '') {
+      return undefined;
+    }
+    const raw = Array.isArray(value) ? value : String(value).split(',');
+    const parsed = raw
+      .map((item) => Number(String(item).trim()))
+      .filter((num) => !Number.isNaN(num));
+    return parsed.length ? parsed : undefined;
+  })
+  @IsArray()
+  @IsInt({ each: true })
+  replaceImageIds?: number[];
+
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === undefined || value === null || value === '') {
+      return undefined;
+    }
+    const raw = Array.isArray(value) ? value : String(value).split(',');
+    const parsed = raw
+      .map((item) => Number(String(item).trim()))
+      .filter((num) => !Number.isNaN(num));
+    return parsed.length ? parsed : undefined;
+  })
+  @IsArray()
+  @IsInt({ each: true })
+  removeImageIds?: number[];
 }

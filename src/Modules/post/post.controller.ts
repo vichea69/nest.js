@@ -3,17 +3,19 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
   Put,
-  UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { PostService } from '@/modules/post/post.service';
 import { CreatePostDto } from '@/modules/post/dto/create-post.dto';
@@ -24,6 +26,8 @@ import { Roles } from '@/modules/auth/decorators/roles.decorator';
 import { Role } from '@/modules/auth/enums/role.enum';
 import { User } from '@/modules/auth/decorators/user.decorator';
 import { UserEntity } from '@/modules/users/entities/user.entity';
+import type { UploadedFilePayload } from '@/types/uploaded-file.type';
+import { PostEntity } from '@/modules/post/post.entity';
 
 @Controller('posts')
 export class PostController {
@@ -31,38 +35,12 @@ export class PostController {
 
   @Get()
   findAll() {
-    return this.postService.findAll().then((items) =>
-      items.map((p) => ({
-        id: p.id,
-        title: p.title,
-        slug: p.slug,
-        content: p.content,
-        status: p.status,
-        imageUrl: p.imageUrl ?? null,
-        createdAt: p.createdAt,
-        updatedAt: p.updatedAt,
-        author: p.author ? { id: p.author.id, displayName: p.author.username, email: p.author.email } : null,
-        category: p.category ? { id: p.category.id, name: p.category.name } : null,
-        page: p.page ? { id: p.page.id, title: p.page.title, slug: p.page.slug } : null,
-      })),
-    );
+    return this.postService.findAll().then((items) => items.map((post) => this.toPostResponse(post)));
   }
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.postService.findOne(id).then((p) => ({
-      id: p.id,
-      title: p.title,
-      slug: p.slug,
-      content: p.content,
-      status: p.status,
-      imageUrl: p.imageUrl ?? null,
-      createdAt: p.createdAt,
-      updatedAt: p.updatedAt,
-      author: p.author ? { id: p.author.id, displayName: p.author.username, email: p.author.email } : null,
-      category: p.category ? { id: p.category.id, name: p.category.name } : null,
-      page: p.page ? { id: p.page.id, title: p.page.title, slug: p.page.slug } : null,
-    }));
+    return this.postService.findOne(id).then((post) => this.toPostResponse(post));
   }
 
   @Post()
@@ -70,29 +48,17 @@ export class PostController {
   @Roles(Role.Admin, Role.Editor)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   @UseInterceptors(
-    FileInterceptor('image', {
+    FilesInterceptor('images', 10, {
       storage: memoryStorage(),
-      limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+      limits: { fileSize: 10 * 1024 * 1024 }, // 10MB per file
     }),
   )
   create(
     @User() user: UserEntity,
     @Body() dto: CreatePostDto,
-    @UploadedFile() file?: any,
+    @UploadedFiles() files?: UploadedFilePayload[],
   ) {
-    return this.postService.create(user, dto, file).then((p) => ({
-      id: p.id,
-      title: p.title,
-      slug: p.slug,
-      content: p.content,
-      status: p.status,
-      imageUrl: p.imageUrl ?? null,
-      createdAt: p.createdAt,
-      updatedAt: p.updatedAt,
-      author: p.author ? { id: p.author.id, displayName: p.author.username, email: p.author.email } : null,
-      category: p.category ? { id: p.category.id, name: p.category.name } : null,
-      page: p.page ? { id: p.page.id, title: p.page.title, slug: p.page.slug } : null,
-    }));
+    return this.postService.create(user, dto, files).then((post) => this.toPostResponse(post));
   }
 
   @Put(':id')
@@ -100,7 +66,7 @@ export class PostController {
   @Roles(Role.Admin, Role.Editor)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   @UseInterceptors(
-    FileInterceptor('image', {
+    FilesInterceptor('images', 10, {
       storage: memoryStorage(),
       limits: { fileSize: 10 * 1024 * 1024 },
     }),
@@ -108,21 +74,21 @@ export class PostController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdatePostDto,
-    @UploadedFile() file?: any,
+    @UploadedFiles() files?: UploadedFilePayload[],
   ) {
-    return this.postService.update(id, dto, file).then((p) => ({
-      id: p.id,
-      title: p.title,
-      slug: p.slug,
-      content: p.content,
-      status: p.status,
-      imageUrl: p.imageUrl ?? null,
-      createdAt: p.createdAt,
-      updatedAt: p.updatedAt,
-      author: p.author ? { id: p.author.id, displayName: p.author.username, email: p.author.email } : null,
-      category: p.category ? { id: p.category.id, name: p.category.name } : null,
-      page: p.page ? { id: p.page.id, title: p.page.title, slug: p.page.slug } : null,
-    }));
+    return this.postService.update(id, dto, files).then((post) => this.toPostResponse(post));
+  }
+
+  @Delete(':postId/images/:imageId')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.Admin, Role.Editor)
+  @HttpCode(HttpStatus.OK)
+  async removeImage(
+    @Param('postId', ParseIntPipe) postId: number,
+    @Param('imageId', ParseIntPipe) imageId: number,
+  ) {
+    await this.postService.removeImage(postId, imageId);
+    return { message: 'Image deleted successfully' };
   }
 
   @Delete(':id')
@@ -130,5 +96,28 @@ export class PostController {
   @Roles(Role.Admin, Role.Editor)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.postService.remove(id);
+  }
+
+  private toPostResponse(post: PostEntity) {
+    return {
+      id: post.id,
+      title: post.title,
+      slug: post.slug,
+      content: post.content,
+      status: post.status,
+      images:
+        post.images?.map((image) => ({
+          id: image.id,
+          url: image.url,
+          sortOrder: image.sortOrder,
+        })) ?? [],
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      author: post.author
+        ? { id: post.author.id, displayName: post.author.username, email: post.author.email }
+        : null,
+      category: post.category ? { id: post.category.id, name: post.category.name } : null,
+      page: post.page ? { id: post.page.id, title: post.page.title, slug: post.page.slug } : null,
+    };
   }
 }

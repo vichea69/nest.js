@@ -4,12 +4,14 @@ import {
     CreateDateColumn,
     Entity,
     ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
 import {UserEntity} from '@/modules/users/entities/user.entity';
 import {CategoryEntity} from '@/modules/category/category.entity';
 import {PageEntity} from '@/modules/page/page.entity';
+import {PostImageEntity} from '@/modules/post/post-image.entity';
 
 export enum PostStatus {
     Draft = 'draft',
@@ -30,11 +32,15 @@ export class PostEntity {
     @Column({type: 'text', nullable: true, default: ''})
     content?: string;
 
-    @Column({type: 'varchar', length: 500, nullable: true})
-    imageUrl?: string | null;
-
     @Column({type: 'enum', enum: PostStatus, default: PostStatus.Draft})
     status: PostStatus;
+
+    @OneToMany(() => PostImageEntity, (image) => image.post, {
+        cascade: true,
+        eager: false,
+        orphanedRowAction: 'delete',
+    })
+    images?: PostImageEntity[];
 
     @ManyToOne(() => UserEntity, {nullable: true, onDelete: 'SET NULL'})
     author?: UserEntity | null;
