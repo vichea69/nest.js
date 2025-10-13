@@ -3,9 +3,10 @@ import { CategoryService } from "@/modules/category/category.service";
 import { CreateCategoryDto } from "@/modules/category/dto/create-category.dto";
 import { UpdateCategoryDto } from "@/modules/category/dto/update-category.dto";
 import { AuthGuard } from "@/modules/auth/guards/auth.guard";
-import { RolesGuard } from "@/modules/auth/guards/roles.guard";
-import { Roles } from "@/modules/auth/decorators/roles.decorator";
-import { Role } from "@/modules/auth/enums/role.enum";
+import { PermissionsGuard } from "@/modules/roles/guards/permissions.guard";
+import { Permissions } from "@/modules/roles/decorator/permissions.decorator";
+import { Resource } from "@/modules/roles/enums/resource.enum";
+import { Action } from "@/modules/roles/enums/actions.enum";
 import { User } from "@/modules/auth/decorators/user.decorator";
 import { UserEntity } from "@/modules/users/entities/user.entity";
 
@@ -46,8 +47,8 @@ export class CategoryController {
     }
 
     @Post()
-    @UseGuards(AuthGuard, RolesGuard)
-    @Roles(Role.Admin, Role.Editor)
+    @UseGuards(AuthGuard, PermissionsGuard)
+    @Permissions({ resource: Resource.Categories, actions: [Action.Create] })
     @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
     create(@User() user: UserEntity, @Body() dto: CreateCategoryDto) {
         return this.categoryService.create(user, dto).then((c) => ({
@@ -63,8 +64,8 @@ export class CategoryController {
     }
 
     @Put(':id')
-    @UseGuards(AuthGuard, RolesGuard)
-    @Roles(Role.Admin, Role.Editor)
+    @UseGuards(AuthGuard, PermissionsGuard)
+    @Permissions({ resource: Resource.Categories, actions: [Action.Update] })
     @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
     update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateCategoryDto) {
         return this.categoryService.update(id, dto).then((c) => ({
@@ -80,8 +81,8 @@ export class CategoryController {
     }
 
     @Delete(':id')
-    @UseGuards(AuthGuard, RolesGuard)
-    @Roles(Role.Admin, Role.Editor)
+    @UseGuards(AuthGuard, PermissionsGuard)
+    @Permissions({ resource: Resource.Categories, actions: [Action.Delete] })
     remove(@Param('id', ParseIntPipe) id: number) {
         return this.categoryService.remove(id);
     }

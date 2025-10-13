@@ -6,7 +6,6 @@ import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import { UserEntity } from '../users/entities/user.entity';
 import { AuthGuard } from './guards/auth.guard';
-import { RolesGuard } from './guards/roles.guard';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { MailerModule } from './mailer/mailer.module';
 
@@ -22,8 +21,8 @@ import { MailerModule } from './mailer/mailer.module';
     MailerModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthGuard, RolesGuard, AuthMiddleware],
-  exports: [AuthService, AuthGuard, RolesGuard],
+  providers: [AuthService, AuthGuard, AuthMiddleware],
+  exports: [AuthService, AuthGuard],
 })
 export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

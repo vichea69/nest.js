@@ -3,8 +3,10 @@ import { PageService } from '@/modules/page/page.service';
 import { CreatePageDto } from '@/modules/page/dto/create-page.dto';
 import { UpdatePageDto } from '@/modules/page/dto/update-page.dto';
 import { AuthGuard } from '@/modules/auth/guards/auth.guard';
-import { RolesGuard } from '@/modules/auth/guards/roles.guard';
-import { Roles } from '@/modules/auth/decorators/roles.decorator';
+import { PermissionsGuard } from '@/modules/roles/guards/permissions.guard';
+import { Permissions } from '@/modules/roles/decorator/permissions.decorator';
+import { Resource } from '@/modules/roles/enums/resource.enum';
+import { Action } from '@/modules/roles/enums/actions.enum';
 import { Role } from '@/modules/auth/enums/role.enum';
 import { User } from '@/modules/auth/decorators/user.decorator';
 import { UserEntity } from '@/modules/users/entities/user.entity';
@@ -81,24 +83,24 @@ export class PageController {
   }
 
   @Post()
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Pages, actions: [Action.Create] })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   create(@User() user: UserEntity, @Body() dto: CreatePageDto) {
     return this.pageService.create(user, dto);
   }
 
   @Put(':slug')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Pages, actions: [Action.Update] })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   update(@Param('slug') slug: string, @Body() dto: UpdatePageDto) {
     return this.pageService.update(slug, dto);
   }
 
   @Delete(':slug')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Pages, actions: [Action.Delete] })
   remove(@Param('slug') slug: string) {
     return this.pageService.remove(slug);
   }

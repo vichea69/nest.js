@@ -1,5 +1,4 @@
-import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
-import { Role } from '../../auth/enums/role.enum';
+import { IsEmail, IsOptional, IsString, Matches } from 'class-validator';
 
 export class UpdateUserDto {
 
@@ -24,6 +23,6 @@ export class UpdateUserDto {
     password?: string;
 
     @IsOptional()
-    @IsEnum(Role)
-    role?: Role;
-}   
+    @Matches(/^[a-z0-9-]+$/, { message: 'Role must be a slug using lowercase letters, numbers, or hyphens.' })
+    role?: string;
+}

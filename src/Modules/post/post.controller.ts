@@ -21,9 +21,10 @@ import { PostService } from '@/modules/post/post.service';
 import { CreatePostDto } from '@/modules/post/dto/create-post.dto';
 import { UpdatePostDto } from '@/modules/post/dto/update-post.dto';
 import { AuthGuard } from '@/modules/auth/guards/auth.guard';
-import { RolesGuard } from '@/modules/auth/guards/roles.guard';
-import { Roles } from '@/modules/auth/decorators/roles.decorator';
-import { Role } from '@/modules/auth/enums/role.enum';
+import { PermissionsGuard } from '@/modules/roles/guards/permissions.guard';
+import { Permissions } from '@/modules/roles/decorator/permissions.decorator';
+import { Resource } from '@/modules/roles/enums/resource.enum';
+import { Action } from '@/modules/roles/enums/actions.enum';
 import { User } from '@/modules/auth/decorators/user.decorator';
 import { UserEntity } from '@/modules/users/entities/user.entity';
 import type { UploadedFilePayload } from '@/types/uploaded-file.type';
@@ -44,8 +45,8 @@ export class PostController {
   }
 
   @Post()
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Posts, actions: [Action.Create] })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   @UseInterceptors(
     FilesInterceptor('images', 10, {
@@ -62,8 +63,8 @@ export class PostController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Posts, actions: [Action.Update] })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   @UseInterceptors(
     FilesInterceptor('images', 10, {
@@ -80,8 +81,8 @@ export class PostController {
   }
 
   @Delete(':postId/images/:imageId')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Posts, actions: [Action.Delete] })
   @HttpCode(HttpStatus.OK)
   async removeImage(
     @Param('postId', ParseIntPipe) postId: number,
@@ -92,8 +93,8 @@ export class PostController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Posts, actions: [Action.Delete] })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.postService.remove(id);
   }

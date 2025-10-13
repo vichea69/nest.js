@@ -1,5 +1,4 @@
-import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
-import { Role } from '../../auth/enums/role.enum';
+import { IsEmail, IsNotEmpty, Matches } from 'class-validator';
 
 export class AdminCreateUserDto {
     @IsNotEmpty()
@@ -12,7 +11,6 @@ export class AdminCreateUserDto {
     @IsNotEmpty()
     readonly password: string;
 
-    @IsEnum(Role)
-    readonly role: Role;
+    @Matches(/^[a-z0-9-]+$/, { message: 'Role must be a slug using lowercase letters, numbers, or hyphens.' })
+    readonly role: string;
 }
-

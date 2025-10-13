@@ -2,9 +2,10 @@ import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseGuard
 import { LogoService } from '@/modules/logo/logo.service';
 import { UpdateLogoDto } from '@/modules/logo/dto/update-logo.dto';
 import { AuthGuard } from '@/modules/auth/guards/auth.guard';
-import { RolesGuard } from '@/modules/auth/guards/roles.guard';
-import { Roles } from '@/modules/auth/decorators/roles.decorator';
-import { Role } from '@/modules/auth/enums/role.enum';
+import { PermissionsGuard } from '@/modules/roles/guards/permissions.guard';
+import { Permissions } from '@/modules/roles/decorator/permissions.decorator';
+import { Resource } from '@/modules/roles/enums/resource.enum';
+import { Action } from '@/modules/roles/enums/actions.enum';
 import { LogoResponseInterface } from '@/modules/logo/types/logoResponse.interface';
 import { LogosResponseInterface } from '@/modules/logo/types/logosResponse.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -28,8 +29,8 @@ export class LogoController {
   }
 
   @Post()
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Logo, actions: [Action.Create] })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   @UseInterceptors(
     FileInterceptor('logo', {
@@ -43,8 +44,8 @@ export class LogoController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Logo, actions: [Action.Update] })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   @UseInterceptors(
     FileInterceptor('logo', {
@@ -62,8 +63,8 @@ export class LogoController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Logo, actions: [Action.Delete] })
   async remove(@Param('id') id: string) {
     await this.logoService.removeById(Number(id));
     return { success: true };

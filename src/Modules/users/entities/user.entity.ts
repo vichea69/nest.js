@@ -32,11 +32,11 @@ export class UserEntity {
     resetPasswordTokenExpiresAt: Date | null = null;
 
     @Column({
-        type: 'enum',
-        enum: Role,
+        type: 'varchar',
+        length: 64,
         default: Role.User,
     })
-    role: Role;
+    role: string;
 
     @BeforeInsert()
     async hashPassword() {

@@ -18,9 +18,6 @@ import { ResendResetEmailDto } from './dto/resend-reset-email.dto';
 import { UsersService } from '../users/users.service';
 import { IUserResponse } from '../users/types/userResponse.interface';
 import { AuthGuard } from './guards/auth.guard';
-import { RolesGuard } from './guards/roles.guard';
-import { Roles } from './decorators/roles.decorator';
-import { Role } from './enums/role.enum';
 
 @Controller('auth')
 export class AuthController {
@@ -42,7 +39,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<IUserResponse> {
     const user = await this.authService.login(dto);
-    const response = this.usersService.generateUserResponse(user);
+    const response = await this.usersService.generateUserResponse(user);
 
     this.attachAuthCookies(res, response);
     return response;
@@ -66,12 +63,11 @@ export class AuthController {
   @UsePipes(new ValidationPipe())
   async resetPassword(@Body() dto: ResetPasswordDto): Promise<IUserResponse> {
     const user = await this.authService.resetPassword(dto);
-    return this.usersService.generateUserResponse(user);
+    return await this.usersService.generateUserResponse(user);
   }
 
   @Post('logout')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor, Role.User)
+  @UseGuards(AuthGuard)
   async logout(@Res({ passthrough: true }) res: Response): Promise<{ ok: boolean }> {
     res.clearCookie('access_token', { path: '/' });
     res.clearCookie('refresh_token', { path: '/' });
@@ -85,7 +81,7 @@ export class AuthController {
   ): Promise<IUserResponse> {
     const refreshToken = (req as any).cookies?.['refresh_token'] as string | undefined;
     const user = await this.authService.refreshAccessToken(refreshToken ?? '');
-    const response = this.usersService.generateUserResponse(user);
+    const response = await this.usersService.generateUserResponse(user);
 
     this.attachAuthCookies(res, response);
     return response;

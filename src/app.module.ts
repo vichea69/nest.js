@@ -12,6 +12,7 @@ import { PageModule } from '@/modules/page/page.module';
 import { MenuModule } from '@/modules/menu/menu.module';
 import { PostModule } from '@/modules/post/post.module';
 import { LogoModule } from '@/modules/logo/logo.module';
+import { RoleModule } from '@/modules/roles/role.module';
 
 
 @Module({
@@ -27,7 +28,8 @@ import { LogoModule } from '@/modules/logo/logo.module';
         PageModule,
         MenuModule,
         PostModule,
-        LogoModule
+        LogoModule,
+        RoleModule
     ],
     controllers: [AppController],
     providers: [AppService],

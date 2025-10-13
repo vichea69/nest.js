@@ -3,13 +3,13 @@ import { CategoryController } from "@/modules/category/category.controller";
 import { CategoryService } from "@/modules/category/category.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { CategoryEntity } from "@/modules/category/category.entity";
-import { RolesGuard } from "@/modules/auth/guards/roles.guard";
+import { RoleModule } from "@/modules/roles/role.module";
 
 @Module(
     {
-        imports: [TypeOrmModule.forFeature([CategoryEntity])],
+        imports: [TypeOrmModule.forFeature([CategoryEntity]), RoleModule],
         controllers: [CategoryController],
-        providers: [CategoryService, RolesGuard],
+        providers: [CategoryService],
         exports: [CategoryService]
 
     }

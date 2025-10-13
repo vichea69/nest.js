@@ -4,9 +4,10 @@ import { ArticleService } from "./article.serverice";
 import { UserEntity } from "@/modules/users/entities/user.entity";
 import { User } from "@/modules/auth/decorators/user.decorator";
 import { AuthGuard } from "@/modules/auth/guards/auth.guard";
-import { Roles } from "@/modules/auth/decorators/roles.decorator";
-import { RolesGuard } from "@/modules/auth/guards/roles.guard";
-import { Role } from "@/modules/auth/enums/role.enum";
+import { PermissionsGuard } from "@/modules/roles/guards/permissions.guard";
+import { Permissions } from "@/modules/roles/decorator/permissions.decorator";
+import { Resource } from "@/modules/roles/enums/resource.enum";
+import { Action } from "@/modules/roles/enums/actions.enum";
 
 @Controller()
 export class ArticleController {
@@ -26,16 +27,16 @@ export class ArticleController {
     }
     //create article
     @Post('articles')
-    @UseGuards(AuthGuard, RolesGuard)
-    @Roles(Role.Admin, Role.Editor)
+    @UseGuards(AuthGuard, PermissionsGuard)
+    @Permissions({ resource: Resource.Articles, actions: [Action.Create] })
     async createArticle(@Body('article') createArticleDto: CreateArticleDto, @User() user: UserEntity) {
         const newArticle = await this.articleService.createArticle(user, createArticleDto);
         return this.articleService.getArticleResponse(newArticle);
     }
     //delete article
     @Delete('articles/:slug')
-    @UseGuards(AuthGuard, RolesGuard)
-    @Roles(Role.Admin, Role.Editor)
+    @UseGuards(AuthGuard, PermissionsGuard)
+    @Permissions({ resource: Resource.Articles, actions: [Action.Delete] })
     async deleteArticle(@Param('slug') slug: string, @User() user: UserEntity) {
         const currentUserId = user.id;
         await this.articleService.deleteArticle(slug, currentUserId);
@@ -45,8 +46,8 @@ export class ArticleController {
     }
     //update article
     @Put('articles/:slug')
-    @UseGuards(AuthGuard, RolesGuard)
-    @Roles(Role.Admin, Role.Editor)
+    @UseGuards(AuthGuard, PermissionsGuard)
+    @Permissions({ resource: Resource.Articles, actions: [Action.Update] })
     @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
     async updateArticle(
         @Param('slug') slug: string,

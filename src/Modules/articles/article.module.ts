@@ -4,12 +4,12 @@ import { ArticleService } from "./article.serverice";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ArticleEntity } from "./article.entity";
 import { UserEntity } from "@/modules/users/entities/user.entity";
-import { RolesGuard } from "@/modules/auth/guards/roles.guard";
+import { RoleModule } from "@/modules/roles/role.module";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([ArticleEntity, UserEntity])],
+    imports: [TypeOrmModule.forFeature([ArticleEntity, UserEntity]), RoleModule],
     controllers: [ArticleController],
-    providers: [ArticleService, RolesGuard],
+    providers: [ArticleService],
     exports: [ArticleService]
 })
 export class ArticleModule { }

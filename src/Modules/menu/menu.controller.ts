@@ -5,9 +5,10 @@ import { UpdateMenuDto } from '@/modules/menu/dto/update-menu.dto';
 import { CreateMenuItemDto } from '@/modules/menu/dto/create-menu-item.dto';
 import { UpdateMenuItemDto } from '@/modules/menu/dto/update-menu-item.dto';
 import { AuthGuard } from '@/modules/auth/guards/auth.guard';
-import { RolesGuard } from '@/modules/auth/guards/roles.guard';
-import { Roles } from '@/modules/auth/decorators/roles.decorator';
-import { Role } from '@/modules/auth/enums/role.enum';
+import { PermissionsGuard } from '@/modules/roles/guards/permissions.guard';
+import { Permissions } from '@/modules/roles/decorator/permissions.decorator';
+import { Resource } from '@/modules/roles/enums/resource.enum';
+import { Action } from '@/modules/roles/enums/actions.enum';
 
 @Controller('menus')
 export class MenuController {
@@ -54,8 +55,8 @@ export class MenuController {
   }
 
   @Post()
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Menu, actions: [Action.Create] })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   async create(@Body() dto: CreateMenuDto) {
     const m = await this.menuService.createMenu(dto);
@@ -69,8 +70,8 @@ export class MenuController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Menu, actions: [Action.Update] })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateMenuDto) {
     const m = await this.menuService.updateMenu(id, dto);
@@ -84,8 +85,8 @@ export class MenuController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Menu, actions: [Action.Delete] })
   async remove(@Param('id', ParseIntPipe) id: number) {
     await this.menuService.removeMenu(id);
     return { message: 'Menu deleted' };
@@ -98,8 +99,8 @@ export class MenuController {
   }
 
   @Post(':menuId/items')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Menu, actions: [Action.Create] })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   async createItem(@Param('menuId', ParseIntPipe) menuId: number, @Body() dto: CreateMenuItemDto) {
     const i = await this.menuService.createMenuItem(menuId, dto);
@@ -115,8 +116,8 @@ export class MenuController {
   }
 
   @Put(':menuId/items/:id')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Menu, actions: [Action.Update] })
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   async updateItem(
     @Param('menuId', ParseIntPipe) menuId: number,
@@ -136,8 +137,8 @@ export class MenuController {
   }
 
   @Delete(':menuId/items/:id')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Editor)
+  @UseGuards(AuthGuard, PermissionsGuard)
+  @Permissions({ resource: Resource.Menu, actions: [Action.Delete] })
   async removeItem(@Param('menuId', ParseIntPipe) menuId: number, @Param('id', ParseIntPipe) id: number) {
     await this.menuService.removeMenuItem(menuId, id);
     return { message: 'Menu item deleted' };

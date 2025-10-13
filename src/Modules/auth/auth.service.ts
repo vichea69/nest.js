@@ -25,7 +25,7 @@ export class AuthService {
 
   async register(dto: CreateUserDto): Promise<IUserResponse> {
     const user = await this.usersService.createUser(dto);
-    return this.usersService.generateUserResponse(user);
+    return await this.usersService.generateUserResponse(user);
   }
 
   async login(dto: LoginDto): Promise<UserEntity> {
