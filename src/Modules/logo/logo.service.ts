@@ -50,6 +50,8 @@ export class LogoService {
     }
 
     if (dto.title !== undefined) logo.title = dto.title ?? null;
+    if (dto.description !== undefined) logo.description = dto.description;
+    if (dto.link !== undefined) logo.link = dto.link;
     return await this.logoRepository.save(logo);
   }
 
@@ -62,6 +64,8 @@ export class LogoService {
     const current = await this.getCurrent();
     if (dto.url !== undefined) current.url = dto.url;
     if (dto.title !== undefined) current.title = dto.title ?? null;
+    if (dto.description !== undefined) current.description = dto.description;
+    if (dto.link !== undefined) current.link = dto.link;
     return await this.logoRepository.save(current);
   }
 
@@ -77,7 +81,12 @@ export class LogoService {
     }
     const key = this.generateObjectKey(file.originalname);
     const url = await this.s3.uploadObject({ key, body: file.buffer, contentType: file.mimetype });
-    const logo = this.logoRepository.create({ url, title: dto.title ?? null });
+    const logo = this.logoRepository.create({
+      url,
+      title: dto.title ?? null,
+      description: dto.description,
+      link: dto.link,
+    });
     return await this.logoRepository.save(logo);
   }
 
