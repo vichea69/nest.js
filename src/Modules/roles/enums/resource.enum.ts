@@ -7,4 +7,5 @@ export enum Resource {
     Users = 'users',
     Roles = 'roles',
     Articles = 'articles',
+    SiteSettings = 'site-settings',
 }

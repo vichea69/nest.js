@@ -26,6 +26,17 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
         ],
     },
     {
+        resource: Resource.SiteSettings,
+        label: 'Site Settings',
+        description: 'Manage global site configuration and branding.',
+        actions: [
+            { action: Action.Read, label: 'View' },
+            { action: Action.Create, label: 'Create' },
+            { action: Action.Update, label: 'Update' },
+            { action: Action.Delete, label: 'Delete' },
+        ],
+    },
+    {
         resource: Resource.Categories,
         label: 'Categories',
         description: 'Create and publish categories.',

@@ -25,6 +25,7 @@ export const DEFAULT_ROLE_SEEDS: RoleSeed[] = [
         isSystem: true,
         permissions: [
             { resource: Resource.Logo, actions: fullCrud },
+            { resource: Resource.SiteSettings, actions: fullCrud },
             { resource: Resource.Categories, actions: fullCrud },
             { resource: Resource.Pages, actions: fullCrud },
             { resource: Resource.Posts, actions: fullCrud },
@@ -41,6 +42,7 @@ export const DEFAULT_ROLE_SEEDS: RoleSeed[] = [
         isSystem: true,
         permissions: [
             { resource: Resource.Logo, actions: fullCrud },
+            { resource: Resource.SiteSettings, actions: fullCrud },
             { resource: Resource.Categories, actions: fullCrud },
             { resource: Resource.Pages, actions: fullCrud },
             { resource: Resource.Posts, actions: fullCrud },
@@ -57,6 +59,7 @@ export const DEFAULT_ROLE_SEEDS: RoleSeed[] = [
         isSystem: true,
         permissions: [
             { resource: Resource.Logo, actions: [Action.Read] },
+            { resource: Resource.SiteSettings, actions: [Action.Read] },
             { resource: Resource.Categories, actions: [Action.Read] },
             { resource: Resource.Pages, actions: [Action.Read] },
             { resource: Resource.Posts, actions: [Action.Read] },

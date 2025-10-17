@@ -13,6 +13,7 @@ import { MenuModule } from '@/modules/menu/menu.module';
 import { PostModule } from '@/modules/post/post.module';
 import { LogoModule } from '@/modules/logo/logo.module';
 import { RoleModule } from '@/modules/roles/role.module';
+import { SiteSettingModule } from '@/modules/site-setting/site-setting.module';
 
 
 @Module({
@@ -29,7 +30,8 @@ import { RoleModule } from '@/modules/roles/role.module';
         MenuModule,
         PostModule,
         LogoModule,
-        RoleModule
+        RoleModule,
+        SiteSettingModule
     ],
     controllers: [AppController],
     providers: [AppService],
