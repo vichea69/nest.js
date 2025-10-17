@@ -5,6 +5,15 @@ export class UploadLogoDto {
   @IsString()
   @MaxLength(200)
   title: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(400)
+  description: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(600)
+  link: string;
+
 }
-
-
