@@ -27,15 +27,15 @@ jobs:
           cd /home/ubuntu/nest.js
           npm install --legacy-peer-deps
 
-      - name: Build NestJS app
-        run: |
-          cd /home/ubuntu/nest.js
-          npm run build
-
       - name: Run PostgreSQL (Docker)
         run: |
           cd /home/ubuntu/nest.js
           docker compose up -d
+
+      - name: Build NestJS app
+        run: |
+          cd /home/ubuntu/nest.js
+          npm run dev
 
       - name: Restart PM2 app
         run: |
