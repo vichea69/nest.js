@@ -13,9 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Navigate to app directory
-        run: cd /home/ubuntu/nest.js
-
       - name: Pull latest code
         run: |
           cd /home/ubuntu/nest.js
@@ -31,14 +28,17 @@ jobs:
         run: |
           cd /home/ubuntu/nest.js
           docker compose up -d
+          echo "⏳ Waiting for PostgreSQL to start..."
+          sleep 5
 
       - name: Build NestJS app
         run: |
           cd /home/ubuntu/nest.js
-          npm run dev
+          npm run build
 
       - name: Restart PM2 app
         run: |
+          export PATH=$PATH:/usr/local/bin
           cd /home/ubuntu/nest.js
           pm2 restart nest-api || pm2 start dist/main.js --name nest-api
           pm2 save
