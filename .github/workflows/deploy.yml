@@ -14,31 +14,31 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Navigate to app directory
-        run: cd /home/ubuntu/nestjs-app
+        run: cd /home/ubuntu/nest.js
 
       - name: Pull latest code
         run: |
-          cd /home/ubuntu/nestjs-app
+          cd /home/ubuntu/nest.js
           git fetch origin main
           git reset --hard origin/main
 
       - name: Install dependencies
         run: |
-          cd /home/ubuntu/nestjs-app
+          cd /home/ubuntu/nest.js
           npm install --legacy-peer-deps
 
       - name: Build NestJS app
         run: |
-          cd /home/ubuntu/nestjs-app
+          cd /home/ubuntu/nest.js
           npm run build
 
       - name: Run PostgreSQL (Docker)
         run: |
-          cd /home/ubuntu/nestjs-app
+          cd /home/ubuntu/nest.js
           docker compose up -d
 
       - name: Restart PM2 app
         run: |
-          cd /home/ubuntu/nestjs-app
+          cd /home/ubuntu/nest.js
           pm2 restart nest-api || pm2 start dist/main.js --name nest-api
           pm2 save
