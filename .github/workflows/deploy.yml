@@ -1,0 +1,44 @@
+name: CI/CD - Deploy via Self-Hosted Runner
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted  # 👈 runs directly on your VPS
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Navigate to app directory
+        run: cd /home/ubuntu/nestjs-app
+
+      - name: Pull latest code
+        run: |
+          cd /home/ubuntu/nestjs-app
+          git fetch origin main
+          git reset --hard origin/main
+
+      - name: Install dependencies
+        run: |
+          cd /home/ubuntu/nestjs-app
+          npm install --legacy-peer-deps
+
+      - name: Build NestJS app
+        run: |
+          cd /home/ubuntu/nestjs-app
+          npm run build
+
+      - name: Run PostgreSQL (Docker)
+        run: |
+          cd /home/ubuntu/nestjs-app
+          docker compose up -d
+
+      - name: Restart PM2 app
+        run: |
+          cd /home/ubuntu/nestjs-app
+          pm2 restart nest-api || pm2 start dist/main.js --name nest-api
+          pm2 save
