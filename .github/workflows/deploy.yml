@@ -42,9 +42,9 @@ jobs:
           cd /home/ubuntu/nest.js
           pm2 restart nest-api || pm2 start npm --name nest-api -- run start:prod
           pm2 save
-          
+
       - name: Health check
         run: |
           echo "🩺 Checking API health..."
           sleep 5
-          curl -f http://localhost:3001/api/v1/health || (echo "❌ API not responding" && exit 1)
+          curl -f https://api-nest.vichea.cyou/api/v1/ || (echo "❌ API not responding" && exit 1)
