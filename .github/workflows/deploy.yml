@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted  # 👈 runs directly on your VPS
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
@@ -28,7 +28,7 @@ jobs:
         run: |
           cd /home/ubuntu/nest.js
           docker compose up -d
-          echo "⏳ Waiting for PostgreSQL to start..."
+          echo "⏳ Waiting for PostgreSQL to be ready..."
           sleep 5
 
       - name: Build NestJS app
@@ -40,5 +40,11 @@ jobs:
         run: |
           export PATH=$PATH:/usr/local/bin
           cd /home/ubuntu/nest.js
-          pm2 restart nest-api || pm2 start dist/main.js --name nest-api
+          pm2 restart nest-api || pm2 start npm --name nest-api -- run start:prod
           pm2 save
+          
+      - name: Health check
+        run: |
+          echo "🩺 Checking API health..."
+          sleep 5
+          curl -f http://localhost:3001/api/v1/health || (echo "❌ API not responding" && exit 1)
