@@ -2,7 +2,7 @@ services:
   postgres:
     image: postgres:16
     container_name: nest_js_postgres
-    restart: no
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
