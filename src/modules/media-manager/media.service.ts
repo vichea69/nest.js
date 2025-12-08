@@ -19,8 +19,36 @@ export class MediaService {
     ) {
     }
 
-    //upload any type of file
-    async upload(file: Express.Multer.File): Promise<MediaResponseInterface> {
+    //upload any type of file and support multiple upload
+    /**
+     * Upload media
+     * - Supports single & multiple files
+     * - Always returns array
+     */
+    async upload(
+        files: Express.Multer.File[],
+    ): Promise<MediaResponseInterface[]> {
+        if (!files || files.length === 0) {
+            return [];
+        }
+
+        const savedMedia: MediaResponseInterface[] = [];
+
+        for (const file of files) {
+            const media = await this.saveFile(file);
+            savedMedia.push(media);
+        }
+
+        return savedMedia;
+    }
+
+    /**
+     * Save ONE file (core logic)
+     * Kept separate for clarity & reuse
+     */
+    async saveFile(
+        file: Express.Multer.File,
+    ): Promise<MediaResponseInterface> {
         const {url} = await this.storageService.upload(file);
 
         const media = this.mediaRepo.create({
