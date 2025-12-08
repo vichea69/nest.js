@@ -1,4 +1,4 @@
-import {Controller, Delete, Get, Post, Put, UploadedFile, UseInterceptors} from "@nestjs/common";
+import {Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UploadedFile, UseInterceptors} from "@nestjs/common";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {MediaResponseInterface} from "@/modules/media-manager/types/media-response-interface";
 import {MediaService} from "@/modules/media-manager/media.service";
@@ -17,8 +17,8 @@ export class MediaController {
 
     //Get by id
     @Get(':id')
-    findOne(): string {
-        return "This is Media Module 🔥"
+    findOne(@Param('id', ParseIntPipe) id: number) {
+        return this.mediaService.findOne(id);
     }
 
     //Create media
