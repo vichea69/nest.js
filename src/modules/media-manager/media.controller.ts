@@ -1,8 +1,13 @@
-import {Controller, Delete, Get, Post, Put} from "@nestjs/common";
+import {Controller, Delete, Get, Post, Put, UploadedFile, UseInterceptors} from "@nestjs/common";
+import {FileInterceptor} from "@nestjs/platform-express";
+import {MediaResponseInterface} from "@/modules/media-manager/types/media-response-interface";
+import {MediaService} from "@/modules/media-manager/media.service";
 
 
 @Controller('media')
 export class MediaController {
+    constructor(private readonly mediaService: MediaService) {
+    }
 
     //Get all Item in media
     @Get()
@@ -17,9 +22,12 @@ export class MediaController {
     }
 
     //Create media
-    @Post()
-    create(): string {
-        return "Create Media Module"
+    @Post('upload')
+    @UseInterceptors(FileInterceptor('file'))
+    upload(
+        @UploadedFile() file: Express.Multer.File,
+    ): Promise<MediaResponseInterface> {
+        return this.mediaService.upload(file);
     }
 
     //Update or edit
