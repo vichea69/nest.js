@@ -2,6 +2,7 @@ import {Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UploadedFile, U
 import {FileInterceptor} from "@nestjs/platform-express";
 import {MediaResponseInterface} from "@/modules/media-manager/types/media-response-interface";
 import {MediaService} from "@/modules/media-manager/media.service";
+import {MediasResponseInterface} from "@/modules/media-manager/types/medias-response-interface";
 
 
 @Controller('media')
@@ -11,7 +12,7 @@ export class MediaController {
 
     //Get all Item in media
     @Get()
-    findAll(): Promise<MediaResponseInterface[]> {
+    findAll(): Promise<MediasResponseInterface> {
         return this.mediaService.findAll()
     }
 

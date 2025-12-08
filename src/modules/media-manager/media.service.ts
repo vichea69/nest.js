@@ -7,6 +7,7 @@ import {MediaResponseInterface} from "@/modules/media-manager/types/media-respon
 import {detectMediaType} from "@/storage/helpers/media-type.helper";
 import path from "node:path";
 import * as fs from "node:fs";
+import {MediasResponseInterface} from "@/modules/media-manager/types/medias-response-interface";
 
 
 @Injectable()
@@ -36,8 +37,12 @@ export class MediaService {
     }
 
     //Get all Media
-    async findAll(): Promise<MediaResponseInterface []> {
-        return this.mediaRepo.find();
+    async findAll(): Promise<MediasResponseInterface> {
+        const items = await this.mediaRepo.find();
+        return {
+            items,
+            total: items.length,
+        }
     }
 
     //Get by id or Get one
