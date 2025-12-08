@@ -37,8 +37,8 @@ export class MediaController {
     }
 
     //Delete something in media
-    @Delete()
-    remove(): string {
-        return "Delete Media Module"
+    @Delete(':id')
+    remove(@Param('id', ParseIntPipe) id: number) {
+        return this.mediaService.remove(id);
     }
 }

@@ -5,6 +5,8 @@ import {Media} from "@/modules/media-manager/media.entity";
 import {Repository} from "typeorm";
 import {MediaResponseInterface} from "@/modules/media-manager/types/media-response-interface";
 import {detectMediaType} from "@/storage/helpers/media-type.helper";
+import path from "node:path";
+import * as fs from "node:fs";
 
 
 @Injectable()
@@ -49,5 +51,31 @@ export class MediaService {
         }
 
         return media;
+    }
+
+    //Delete
+    async remove(id: number) {
+        const media = await this.mediaRepo.findOne({where: {id}});
+
+        if (!media) {
+            throw new NotFoundException(`Media with ID ${id} not found`);
+        }
+        // Delete local file
+        if (media.storageDriver === 'local') {
+            const filePath = path.join(
+                process.cwd(),
+                media.url.replace('/', ''),
+            );
+
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+
+        await this.mediaRepo.remove(media);
+
+        return {
+            message: 'Media deleted successfully',
+        };
     }
 }
