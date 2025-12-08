@@ -15,6 +15,7 @@ export class MediaService {
     ) {
     }
 
+    //upload any type of file
     async upload(file: Express.Multer.File): Promise<MediaResponseInterface> {
         const {url} = await this.storageService.upload(file);
 
@@ -31,6 +32,7 @@ export class MediaService {
         return this.mediaRepo.save(media);
     }
 
+    //Get all Media
     async findAll(): Promise<MediaResponseInterface []> {
         return this.mediaRepo.find();
     }

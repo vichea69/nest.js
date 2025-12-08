@@ -11,8 +11,8 @@ export class MediaController {
 
     //Get all Item in media
     @Get()
-    findAll(): string {
-        return "This is Media Module 🔥"
+    findAll(): Promise<MediaResponseInterface[]> {
+        return this.mediaService.findAll()
     }
 
     //Get by id
