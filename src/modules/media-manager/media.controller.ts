@@ -28,11 +28,16 @@ export class MediaController {
         return this.mediaService.upload(files);
     }
 
-    //Update or edit
-    @Put()
-    update(): string {
-        return "update Media Module"
+    //Replace Media
+    @Put(':id/replace')
+    @UseInterceptors(FilesInterceptor('files', 1))
+    replace(
+        @Param('id', ParseIntPipe) id: number,
+        @UploadedFiles() files: Express.Multer.File[],
+    ) {
+        return this.mediaService.replace(id, files[0]);
     }
+
 
     //Delete something in media
     @Delete(':id')

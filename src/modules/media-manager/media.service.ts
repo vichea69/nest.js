@@ -20,11 +20,6 @@ export class MediaService {
     }
 
     //upload any type of file and support multiple upload
-    /**
-     * Upload media
-     * - Supports single & multiple files
-     * - Always returns array
-     */
     async upload(
         files: Express.Multer.File[],
     ): Promise<MediaResponseInterface[]> {
@@ -42,10 +37,6 @@ export class MediaService {
         return savedMedia;
     }
 
-    /**
-     * Save ONE file (core logic)
-     * Kept separate for clarity & reuse
-     */
     async saveFile(
         file: Express.Multer.File,
     ): Promise<MediaResponseInterface> {
@@ -111,4 +102,45 @@ export class MediaService {
             message: 'Media deleted successfully',
         };
     }
+
+    //Replace File
+    async replace(id: number, file: Express.Multer.File) {
+        const media = await this.mediaRepo.findOne({where: {id}});
+
+        if (!media) {
+            throw new NotFoundException(`Media with ID ${id} not found`);
+        }
+
+        //  Delete old local file
+        if (media.storageDriver === 'local') {
+            const oldFilePath = path.join(
+                process.cwd(),
+                media.url.replace('/', ''),
+            );
+
+            if (fs.existsSync(oldFilePath)) {
+                fs.unlinkSync(oldFilePath);
+            }
+        }
+
+        // Upload new file
+        const {url} = await this.storageService.upload(file);
+
+        //Update DB record
+        media.filename = file.originalname;
+        media.originalName = file.originalname;
+        media.mimeType = file.mimetype;
+        media.size = file.size;
+        media.url = url;
+        media.mediaType = detectMediaType(file.mimetype);
+        media.storageDriver = 'local';
+
+        await this.mediaRepo.save(media);
+
+        return {
+            message: 'Media replaced successfully',
+            data: media,
+        };
+    }
+
 }
