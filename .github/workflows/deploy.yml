@@ -15,36 +15,36 @@ jobs:
 
       - name: Pull latest code
         run: |
-          cd /home/ubuntu/nest.js
+          cd /home/ubuntu/app/nest.js
           git fetch origin main
           git reset --hard origin/main
 
       - name: Install dependencies
         run: |
-          cd /home/ubuntu/nest.js
+          cd /home/ubuntu/app/nest.js
           npm install --legacy-peer-deps
 
       - name: Run PostgreSQL (Docker)
         run: |
-          cd /home/ubuntu/nest.js
+          cd /home/ubuntu/app/nest.js
           docker compose up -d
           echo "⏳ Waiting for PostgreSQL to be ready..."
           sleep 5
 
       - name: Build NestJS app
         run: |
-          cd /home/ubuntu/nest.js
+          cd /home/ubuntu/app/nest.js
           npm run build
 
       - name: Restart PM2 app
         run: |
           export PATH=$PATH:/usr/local/bin
-          cd /home/ubuntu/nest.js
-          pm2 restart nest-api || pm2 start npm --name nest-api -- run start:prod
+          cd /home/ubuntu/app/nest.js
+          pm2 restart gpsf-api  || pm2 start npm --name gpsf-api -- run start:prod
           pm2 save
 
       - name: Health check
         run: |
           echo "🩺 Checking API health..."
           sleep 5
-          curl -f https://api-nest.vichea.cyou/api/v1/ || (echo "❌ API not responding" && exit 1)
+          curl -f https://api-gpsf.vichea.dev/api/v1/ || (echo "❌ API not responding" && exit 1)
