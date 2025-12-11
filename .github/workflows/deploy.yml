@@ -43,8 +43,14 @@ jobs:
           pm2 restart gpsf-api  || pm2 start npm --name gpsf-api -- run start:prod
           pm2 save
 
+      - name: Load PORT from .env
+        run: |
+          cd /home/ubuntu/app/nest.js
+          PORT=$(grep -E '^PORT=' .env | cut -d '=' -f2-)
+          echo "PORT=$PORT" >> $GITHUB_ENV
+
       - name: Health check
         run: |
           echo "🩺 Checking API health..."
           sleep 5
-          curl -f http://localhost:3001/api/v1/ || (echo "❌ API not responding" && exit 1)
+          curl -f http://localhost:${PORT}/api/v1/ || (echo "❌ API not responding" && exit 1)
