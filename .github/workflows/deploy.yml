@@ -47,4 +47,4 @@ jobs:
         run: |
           echo "🩺 Checking API health..."
           sleep 5
-          curl -f https://api-gpsf.vichea.dev/api/v1/ || (echo "❌ API not responding" && exit 1)
+          curl -f http://localhost:3001/api/v1/ || (echo "❌ API not responding" && exit 1)
