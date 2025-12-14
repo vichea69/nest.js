@@ -38,7 +38,7 @@ export default tseslint.config(
             'prefer-const': 'warn',
             'no-empty-function': 'warn',
 
-            // 🛑 Disable Prettier warning if you want to format manually
+           
             'prettier/prettier': 'warn',
         },
     }
