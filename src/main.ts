@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
 import * as express from 'express';
 import {join} from 'path';
+import {apiReference} from "@scalar/nestjs-api-reference";
 
 
 async function bootstrap() {
@@ -49,6 +50,13 @@ async function bootstrap() {
             forbidNonWhitelisted: true,
             transform: true,
 
+        }),
+    );
+    // Scalar openAPI
+    app.use(
+        '/api/v1/reference',
+        apiReference({
+            content: document,
         }),
     );
     app.useGlobalInterceptors(new ResponseInterceptor());
