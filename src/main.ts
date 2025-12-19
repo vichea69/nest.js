@@ -54,8 +54,10 @@ async function bootstrap() {
     );
     // Scalar openAPI
     app.use(
-        '/api/v1/reference',
+        '/api/v1/doc',
         apiReference({
+            cdn: 'https://cdn.jsdelivr.net/npm/@scalar/api-reference@latest',
+            theme: 'elysiajs',
             content: document,
         }),
     );
